@@ -1,7 +1,7 @@
 #pragma once
-#include "SDL.h"
-#include "SDL_image.h"
-#include "glm/glm.hpp"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <glm/glm.hpp>
 #include "../ECS/ESC.h"
 #include "../Assets/AssetStore.h"
 #include "../Events/EventBus.h"
