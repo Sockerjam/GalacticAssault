@@ -60,39 +60,54 @@ public:
 
 	}
 
-	static void centerText(std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, Entity& entity) {
+	static void centerText(std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, TextLabelComponent& textLabelComponent) {
 
-		if (entity.hasComponent<TextLabelComponent>()) {
+		TTF_Font* font = assetStore->getFont(textLabelComponent.assetid);
 
-			TextLabelComponent& textLabelComponent = entity.getComponent<TextLabelComponent>();
+		SDL_Surface* surface = TTF_RenderText_Blended(
+			font, 
+			textLabelComponent.text.c_str(), 
+			textLabelComponent.textColor);
 
-			TTF_Font* font = assetStore->getFont(textLabelComponent.assetid);
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);	
+	
+		if (texture == NULL) {
+			Logger::LogErr(SDL_GetError());
+		}
 
-			SDL_Surface* surface = TTF_RenderText_Blended(
-				font, 
-				textLabelComponent.text.c_str(), 
-				textLabelComponent.textColor);
+		SDL_FreeSurface(surface);
 
-			SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);	
-				if (texture == NULL) {
-					Logger::LogErr(SDL_GetError());
-				}
+		SDL_Rect rect{};
 
-			SDL_FreeSurface(surface);
+		if (SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h) != 0) {
+			Logger::LogErr(SDL_GetError());
+		}
 
-			SDL_Rect rect{};
+		textLabelComponent.position.x -= rect.w * 0.5f;
+	}
+	
+	static void alignRight(std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, TextLabelComponent& textLabelComponent) {
 
-			if (SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h) != 0) {
+		TTF_Font* font = assetStore->getFont(textLabelComponent.assetid);
+
+		SDL_Surface* surface = TTF_RenderText_Blended(
+			font, 
+			textLabelComponent.text.c_str(), 
+			textLabelComponent.textColor);
+
+		SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);	
+			if (texture == NULL) {
 				Logger::LogErr(SDL_GetError());
 			}
 
-			Logger::Log("Original Position X: " + std::to_string(textLabelComponent.position.x));
+		SDL_FreeSurface(surface);
 
-			textLabelComponent.position.x -= rect.w * 0.5f;
-			
-			Logger::Log("New Position X: " + std::to_string(textLabelComponent.position.x));
+		SDL_Rect rect{};
 
+		if (SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h) != 0) {
+			Logger::LogErr(SDL_GetError());
 		}
+
+		textLabelComponent.position.x -= rect.w;
 	}
-	
 };

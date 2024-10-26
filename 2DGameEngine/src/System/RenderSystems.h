@@ -32,6 +32,84 @@ public:
 	}
 };
 
+class HUDRenderSystem : public System {
+
+public:
+
+	HUDRenderSystem() {
+		requireComponent<HUDComponent>();
+	}
+
+	void update(std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer) {
+
+		for (auto& entity : getEntities()) {
+			
+			const auto& hudComponent = entity.getComponent<HUDComponent>();
+
+			const auto& textLabelComponent = hudComponent.textLabelComponent;
+
+			if (textLabelComponent != nullptr) {
+							
+				TTF_Font* font = assetStore->getFont(textLabelComponent->assetid);
+
+				SDL_Surface* surface = TTF_RenderText_Blended(
+					font, 
+					textLabelComponent->text.c_str(), 
+					textLabelComponent->textColor
+					);
+
+				SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);	
+					if (texture == NULL) {
+						Logger::LogErr(SDL_GetError());
+					}
+
+				SDL_FreeSurface(surface);
+
+				int labelWidth = 0;
+				int labelHeight = 0;
+
+				if (SDL_QueryTexture(texture, NULL, NULL, &labelWidth, &labelHeight) != 0) {
+					Logger::LogErr(SDL_GetError());
+				}
+
+				SDL_Rect dstRect = {
+					static_cast<int>(textLabelComponent->position.x),
+					static_cast<int>(textLabelComponent->position.y),
+					labelWidth,
+					labelHeight	
+				};
+
+				SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+
+			}
+			else {
+				
+				SDL_Texture* texture = assetStore->getTexture(hudComponent.assetid);
+			
+				SDL_FRect dstRect = {
+					hudComponent.position.x,
+					hudComponent.position.y,
+					hudComponent.size.x,
+					hudComponent.size.y
+				};
+
+				SDL_RenderCopyExF(
+					renderer,
+					texture,
+					NULL,
+					&dstRect,
+					0,
+					NULL,
+					SDL_FLIP_NONE);
+			}
+
+		}
+
+
+	}
+
+};
+
 class TextRenderSystem : public System {
 
 public:

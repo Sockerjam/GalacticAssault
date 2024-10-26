@@ -252,3 +252,22 @@ struct DamageComponent {
 
 	DamageComponent(float hitDamage = 0) : hitDamage(hitDamage) {};
 };
+
+struct HUDComponent {
+
+	std::shared_ptr<TextLabelComponent> textLabelComponent;
+	std::string assetid = "";
+	glm::vec2 position{0, 0};
+	glm::vec2 size{0, 0};
+
+	HUDComponent() = default;
+
+	HUDComponent(TextLabelComponent& textLabelComponent) {
+		this->textLabelComponent = std::make_shared<TextLabelComponent>(textLabelComponent);
+	};
+
+	HUDComponent(std::string assetid, glm::vec2 position, glm::vec2 size) :
+		assetid(assetid),
+		position(position),
+		size(size) {};
+};

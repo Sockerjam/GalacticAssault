@@ -15,6 +15,8 @@ private:
 	bool isRunning;
 	int msPreviousFrame;
 	float deltaTime;
+	float centerX;
+	float centerY;
 
 	SDL_DisplayMode displayMode;
 	SDL_Window* window;
@@ -25,11 +27,15 @@ private:
 	std::unique_ptr<AssetStore> assetStore;
 	std::unique_ptr<EventBus> eventBus;
 
+	void setCenterValues();
 	void loadLevel(int level);
 	void setupEventSubscriptions();
 	void addSystems();
 	void addTextures();
 	void addFonts();
+	void createBackground();
+	void createPlayer();
+	void createHUDComponents();
 
 	bool isDebug;
 

@@ -9,10 +9,11 @@
 #include <sstream>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
+#include "../Helpers/Styling.h"
 
 int Game::windowHeight = 720;
 int Game::windowWidth = 1024;
-int Game::mapHeight = 690;
+int Game::mapHeight = 688;
 int Game::mapWidth = 1024;
 int Game::mapOffset = Game::windowHeight - Game::mapHeight;
 
@@ -67,7 +68,8 @@ Game::Game()
 	//SDL_SetWindowFullscreen(
 	//	window, 
 	//	SDL_WINDOW_FULLSCREEN);
-
+	
+	setCenterValues();
 	setup();
 
 	isRunning = true;
@@ -78,18 +80,29 @@ Game::~Game()
 	Logger::Log("Game Object Deconstructed");
 };
 
+void Game::setCenterValues() {
+	centerX = static_cast<float>(Game::mapWidth) * 0.5f;
+	centerY = static_cast<float>(Game::mapHeight) * 0.5f;
+}
+
 void Game::loadLevel(int level) {
 
 	addSystems();
 	addTextures();
 	addFonts();
+	createBackground();
+	createPlayer();
+	createHUDComponents();
+}
 
-	float centerX = static_cast<float>(Game::mapWidth) * 0.5f;
-	float centerY = static_cast<float>(Game::mapHeight) * 0.5f;
-	float startingX = static_cast<float>(Game::mapWidth) * 0.02f;
-
+void Game::createBackground() {
 	Entity background = registry->createEntity(tileMap);
 	background.addComponent<BackgroundComponent>("space", glm::vec2(0.0f, 0.0f), glm::vec2(mapWidth, mapHeight));
+}
+
+void Game::createPlayer() {
+
+	float startingX = static_cast<float>(Game::mapWidth) * 0.02f;
 
 	Entity playerShip = registry->createEntity(player);
 	playerShip.addComponent<SpriteComponent>("player", glm::vec2(24, 36));
@@ -101,10 +114,20 @@ void Game::loadLevel(int level) {
 	playerShip.addComponent<HealthComponent>();
 	playerShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
 
-	Entity textLabel = registry->createEntity(gui);
-	textLabel.addComponent<TextLabelComponent>("digiBold", glm::vec2(centerX, 0), "SPACE IMPACT", Color::GREEN);
+}
 
-	Helper::centerText(assetStore, renderer, textLabel);
+void Game::createHUDComponents() {
+
+	Entity title = registry->createEntity(gui);
+	TextLabelComponent textLabelComponent("digiBold", glm::vec2(centerX, 0.0f), "GALACTIC ASSAULT", Color::GREEN);
+	Helper::centerText(assetStore, renderer, textLabelComponent);
+	title.addComponent<HUDComponent>(textLabelComponent);
+
+	Entity points = registry->createEntity(gui);
+	TextLabelComponent pointTextLabelComponent("digiBold", glm::vec2(Game::windowWidth, 0.0f), "POINTS: 00", Color::GREEN);
+	Helper::alignRight(assetStore, renderer, pointTextLabelComponent);
+	points.addComponent<HUDComponent>(pointTextLabelComponent);
+	
 }
 
 void Game::addSystems() {
@@ -128,6 +151,7 @@ void Game::addSystems() {
 	registry->addSystem<HealthUpdateSystem>();
 	registry->addSystem<ExplosionSystem>();
 	registry->addSystem<DynamicTextSystem>();
+	registry->addSystem<HUDRenderSystem>();
 }
 
 void Game::addTextures() {
@@ -265,6 +289,8 @@ void Game::render() {
 	registry->getSystem<HealthBarRenderSystem>().update(renderer, Game::mapOffset);
 
 	registry->getSystem<TextRenderSystem>().update(renderer, assetStore, Game::mapOffset);
+
+	registry->getSystem<HUDRenderSystem>().update(assetStore, renderer);
 	
 	SDL_RenderPresent(renderer);
 };
