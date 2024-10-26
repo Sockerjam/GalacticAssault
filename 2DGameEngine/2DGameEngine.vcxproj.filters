@@ -1330,9 +1330,6 @@
     <Image Include="assets\images\engine_fire.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="assets\images\player.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="assets\images\player_laser.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -1352,6 +1349,15 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="assets\images\playerShip2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\images\enemy_blue.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\images\enemy_ai.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="assets\images\heart.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

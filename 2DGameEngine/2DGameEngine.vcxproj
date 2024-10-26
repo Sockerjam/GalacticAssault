@@ -584,10 +584,12 @@
     <Image Include="assets\images\chopper.png" />
     <Image Include="assets\images\enemyexplosion.png" />
     <Image Include="assets\images\enemyLaser.png" />
+    <Image Include="assets\images\enemy_ai.png" />
     <Image Include="assets\images\enemy_black.png" />
+    <Image Include="assets\images\enemy_blue.png" />
     <Image Include="assets\images\engine_fire.png" />
+    <Image Include="assets\images\heart.png" />
     <Image Include="assets\images\landing-base.png" />
-    <Image Include="assets\images\player.png" />
     <Image Include="assets\images\playerexplosion.png" />
     <Image Include="assets\images\playerShip2.png" />
     <Image Include="assets\images\player_laser.png" />
