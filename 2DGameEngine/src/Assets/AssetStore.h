@@ -2,9 +2,9 @@
 
 #include <map>
 #include <string>
-#include "SDL.h"
+#include <SDL.h>
 #include <vector>
-#include "SDL_ttf.h"
+#include <SDL_ttf.h>
 
 class AssetStore {
 

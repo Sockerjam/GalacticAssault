@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS += -Wall -std=c++17 $(shell sdl2-config --cflags) -I/opt/homebrew/include
 
 # Linker Flags
-LDFLAGS += $(shell sdl2-config --libs)
+LDFLAGS += $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf -lSDL2_mixer 
 
  # Source Files
 SOURCES = $(shell find src -name '*.cpp')
@@ -21,11 +21,11 @@ all: $(TARGET)
 
 # Build Target
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -v -o $(TARGET) $(LDFLAGS)
 
 # Compile Source Files into Object Files
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -v -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Clean Build Files
 clean:
