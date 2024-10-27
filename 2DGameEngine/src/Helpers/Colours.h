@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL.h"
+#include <SDL.h>
 
 struct Color {
 	static constexpr SDL_Color WHITE{ 255, 255, 255 };

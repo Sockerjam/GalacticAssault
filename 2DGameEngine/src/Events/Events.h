@@ -2,7 +2,7 @@
 #include "../ECS/ESC.h"
 #include "Event.h"
 #include "../Assets/AssetStore.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "../Game/Game.h"
 
 class CollisionEvent : public Event {

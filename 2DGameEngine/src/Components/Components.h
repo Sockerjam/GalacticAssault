@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "../ECS/ESC.h"
-#include "SDL.h"
+#include <SDL.h>
 #include <memory>
 
 struct RigidBodyComponent {

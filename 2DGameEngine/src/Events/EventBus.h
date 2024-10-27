@@ -1,6 +1,6 @@
 #pragma once
 #include "../Logger/Logger.h"
-#include "SDL.h"
+#include <SDL.h>
 #include "Event.h"
 #include <map>
 #include <list>

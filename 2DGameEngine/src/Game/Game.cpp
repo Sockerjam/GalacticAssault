@@ -1,10 +1,9 @@
 #include "Game.h"
-#include "SDL.h"
 #include "../Logger/Logger.h"
 #include "../Components/Components.h"
 #include "../System/Systems.h"
 #include "../System/RenderSystems.h"
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
 #include <fstream>
 #include <sstream>
 #include "../Helpers/Colours.h"
@@ -72,7 +71,7 @@ Game::Game()
 	setCenterValues();
 	setup();
 
-	isRunning = true;
+	isRunnina = true;
 };
 
 Game::~Game()
