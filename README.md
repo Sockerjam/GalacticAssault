@@ -1,6 +1,6 @@
 # GALACTIC ASSAULT
 
-Galactic Assault is a game written in c++ built on top of SDL2.
+Galactic Assault is a game written in c++, and built on top of SDL2.
 
 Runs on Windows and Mac.
 
