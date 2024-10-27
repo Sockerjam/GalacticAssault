@@ -19,7 +19,7 @@ Install GLM using Homebrew:
 `brew install glm`
 
 ## Compile the Project
-Run the following command in your project's root directory:
+Run the following command in the project's directory **GalacticAssault/2DGameEngine**:
 
 
 `make`
