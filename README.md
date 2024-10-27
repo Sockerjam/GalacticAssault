@@ -24,6 +24,10 @@ Run the following command in the project's directory **GalacticAssault/2DGameEng
 
 `make`
 
+If all goes well, run the following command:
+
+`make run`
+
 ## How to compile on Windows
 Use Visual Studio to open:
 
