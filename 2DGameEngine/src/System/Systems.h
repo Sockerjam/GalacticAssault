@@ -233,9 +233,7 @@ public:
 
 		for (auto& entity : getEntities()) {
 
-			auto& spriteComponent = entity.getComponent<SpriteComponent>();
 			auto& rigidBodyComponent = entity.getComponent<RigidBodyComponent>();
-			const auto& keyboardControllerComponent = entity.getComponent<KeyboardControllerComponent>();
 			auto& transformComponent = entity.getComponent<TransformComponent>();
 
 			switch (event.symbol) {

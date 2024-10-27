@@ -71,7 +71,7 @@ Game::Game()
 	setCenterValues();
 	setup();
 
-	isRunnina = true;
+	isRunning = true;
 };
 
 Game::~Game()

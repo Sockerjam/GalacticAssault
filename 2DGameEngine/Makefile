@@ -27,6 +27,10 @@ $(TARGET): $(OBJECTS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+# Build Object Files to Check for Compiler Errors
+build: $(OBJECTS)
+	@echo "All source files have been compiled into object files."
+
 # Clean Build Files
 clean:
 	rm -f $(OBJECTS) $(TARGET)
