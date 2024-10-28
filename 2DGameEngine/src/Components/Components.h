@@ -286,5 +286,5 @@ struct KillPointsComponent {
 
   int points = 0;
 
-  KillPointsComponent(int point = 0) : points(points) {};
+  KillPointsComponent(int points = 0) : points(points) {};
 };
