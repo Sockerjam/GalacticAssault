@@ -534,13 +534,15 @@ public:
   }
 
   void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
-    
+   eventBus->subscribeToEvent<PointSystem, PointEvent>(this, &PointSystem::updatePoints); 
   }
 
   void updatePoints(PointEvent& event) {
     if (event.entity.hasComponent<KillPointsComponent>()) {
       const auto& killPointsComponent = event.entity.getComponent<KillPointsComponent>();
       points += killPointsComponent.points;
+      Logger::Log("POINTS FROM EVENT: " + std::to_string(killPointsComponent.points));
+      Logger::Log("POINTS STORED: " + std::to_string(points));
     } 
   }
 
@@ -629,6 +631,7 @@ public:
 			event.entity.kill();
 			event.eventBus->publishEvent<ExplosionEvent>(event.registry, event.entityType, event.entity);
       if (event.entityType == ENEMY) {
+        Logger::Log("POINTS FROM UPDATE HEALTH: " + std::to_string(event.entity.getComponent<KillPointsComponent>().points));
         event.eventBus->publishEvent<PointEvent>(event.entity);
       }
 		}
