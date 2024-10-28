@@ -199,6 +199,9 @@ void Game::setupEventSubscriptions() {
 
 	auto& dynamicTextSystem = registry->getSystem<DynamicTextSystem>();
 	dynamicTextSystem.subscribeToEvent(eventBus);
+
+  auto& pointSystem = registry->getSystem<PointSystem>();
+  pointSystem.subscribeToEvent(eventBus);
 }
 
 void Game::run()

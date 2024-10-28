@@ -478,6 +478,7 @@ public:
 			enemyShip.addComponent<ExplosionComponent>();
 			enemyShip.addComponent<DamageComponent>(0.5f);
 			enemyShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
+      enemyShip.addComponent<KillPointsComponent>(1);
 		}
 
 	}
@@ -537,7 +538,10 @@ public:
   }
 
   void updatePoints(PointEvent& event) {
-  
+    if (event.entity.hasComponent<KillPointsComponent>()) {
+      const auto& killPointsComponent = event.entity.getComponent<KillPointsComponent>();
+      points += killPointsComponent.points;
+    } 
   }
 
 };
@@ -624,7 +628,9 @@ public:
 		if (healthComponent.health <= 0) {
 			event.entity.kill();
 			event.eventBus->publishEvent<ExplosionEvent>(event.registry, event.entityType, event.entity);
-      event.eventBus->publishEvent<PointEvent>(event.entity);
+      if (event.entityType == ENEMY) {
+        event.eventBus->publishEvent<PointEvent>(event.entity);
+      }
 		}
 	}
 };
