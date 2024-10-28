@@ -3,6 +3,7 @@
 #include "Event.h"
 #include "../Assets/AssetStore.h"
 #include <SDL.h>
+#include <cwchar>
 #include "../Game/Game.h"
 
 class CollisionEvent : public Event {
@@ -41,15 +42,15 @@ public:
 
 	std::unique_ptr<Registry>& registry;
 	std::unique_ptr<AssetStore>& assetStore;
-	int windowWidth; 
-	int windowHeight;
+	int mapWidth; 
+	int mapHeight;
 	float speed;
 	
-	EnemySpawnEvent(std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, int windowWidth, int windowHeight, float speed) : 
+	EnemySpawnEvent(std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, int mapWidth, int mapHeight, float speed) : 
 		registry(registry),
 		assetStore(assetStore),
-		windowWidth(windowWidth),
-		windowHeight(windowHeight),
+		mapWidth(mapWidth),
+		mapHeight(mapHeight),
 		speed(speed) {};
 };
 
@@ -103,4 +104,12 @@ public:
 	float health;
 
 	UpdateTextEvent(Entity& entity, float health) : entity(entity), health(health) {};
+};
+
+class PointEvent : public Event {
+public:
+
+  Entity& entity;
+
+  PointEvent(Entity& entity) : entity(entity) {};
 };

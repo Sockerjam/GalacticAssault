@@ -255,19 +255,36 @@ struct DamageComponent {
 
 struct HUDComponent {
 
+  enum HUDType {
+    POINTS,
+    TITLE,
+    HEALTH,
+    NONE
+  };
+
 	std::shared_ptr<TextLabelComponent> textLabelComponent;
 	std::string assetid = "";
 	glm::vec2 position{0, 0};
 	glm::vec2 size{0, 0};
+  HUDType type = NONE;
 
 	HUDComponent() = default;
 
-	HUDComponent(TextLabelComponent& textLabelComponent) {
+	HUDComponent(TextLabelComponent& textLabelComponent, HUDType type) {
 		this->textLabelComponent = std::make_shared<TextLabelComponent>(textLabelComponent);
+    this->type = type;
 	};
 
-	HUDComponent(std::string assetid, glm::vec2 position, glm::vec2 size) :
+	HUDComponent(std::string assetid, glm::vec2 position, glm::vec2 size, HUDType type) :
 		assetid(assetid),
 		position(position),
-		size(size) {};
+		size(size),
+    type(type) {};
+};
+
+struct KillPointsComponent {
+
+  int points = 0;
+
+  KillPointsComponent(int points) : points(points) {};
 };

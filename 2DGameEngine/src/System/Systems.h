@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <iterator>
 #include <random>
+#include <string>
 #include "../Helpers/Helpers.h"
 #include "../Helpers/Colours.h"
 
@@ -440,14 +441,15 @@ public:
 		srand(static_cast<Uint32>(time(0)));
 	}
 
-	void update(std::unique_ptr<Registry>& registry, std::unique_ptr<EventBus>& eventBus, std::unique_ptr<AssetStore>& assetStore, int windowWidth, int windowHeight) {
+	void update(std::unique_ptr<Registry>& registry, std::unique_ptr<EventBus>& eventBus, 
+             std::unique_ptr<AssetStore>& assetStore, int mapWidth, int mapHeight) {
 
 		const auto& entities = getEntities();
 
 		if (entities.empty()) {
 			speed *= turn;
 			turn++;
-			eventBus->publishEvent<EnemySpawnEvent>(registry, assetStore, windowWidth, windowHeight, speed);
+			eventBus->publishEvent<EnemySpawnEvent>(registry, assetStore, mapWidth, mapHeight, speed);
 		}
 	};
 
@@ -459,8 +461,8 @@ public:
 		
 		for (int i = 0; i < 10; i++) {
 			float randomNr = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-			float randomY = randomNr * event.windowHeight;
-			float randomX = (randomNr * event.windowWidth) + event.windowWidth + 100.0f;
+			float randomY = randomNr * event.mapHeight;
+			float randomX = (randomNr * event.mapWidth) + event.mapWidth + 100.0f;
 
 			std::string enemySpriteName = "enemyBlack";
 
@@ -504,6 +506,40 @@ public:
 		}
 
 	}
+};
+
+class PointSystem : public System {
+private:
+
+  int points = 0;
+
+public:
+
+  PointSystem() {
+    requireComponent<HUDComponent>();
+  }
+
+  void update() {
+    for (auto& entity : getEntities()) {
+
+      auto& hudComponent = entity.getComponent<HUDComponent>();
+
+      if (hudComponent.type == HUDComponent::HUDType::POINTS) {
+        if (hudComponent.textLabelComponent != nullptr) {
+          hudComponent.textLabelComponent->text = "POINTS: " + std::to_string(points);
+        }
+      }
+    }
+  }
+
+  void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
+    
+  }
+
+  void updatePoints(PointEvent& event) {
+  
+  }
+
 };
 
 class DynamicTextSystem : public System {
@@ -588,6 +624,7 @@ public:
 		if (healthComponent.health <= 0) {
 			event.entity.kill();
 			event.eventBus->publishEvent<ExplosionEvent>(event.registry, event.entityType, event.entity);
+      event.eventBus->publishEvent<PointEvent>(event.entity);
 		}
 	}
 };

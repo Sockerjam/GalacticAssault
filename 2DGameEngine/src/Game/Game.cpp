@@ -120,12 +120,12 @@ void Game::createHUDComponents() {
 	Entity title = registry->createEntity(gui);
 	TextLabelComponent textLabelComponent("digiBold", glm::vec2(centerX, 0.0f), "GALACTIC ASSAULT", Color::GREEN);
 	Helper::centerText(assetStore, renderer, textLabelComponent);
-	title.addComponent<HUDComponent>(textLabelComponent);
+	title.addComponent<HUDComponent>(textLabelComponent, HUDComponent::HUDType::TITLE);
 
 	Entity points = registry->createEntity(gui);
 	TextLabelComponent pointTextLabelComponent("digiBold", glm::vec2(Game::windowWidth, 0.0f), "POINTS: 00", Color::GREEN);
 	Helper::alignRight(assetStore, renderer, pointTextLabelComponent);
-	points.addComponent<HUDComponent>(pointTextLabelComponent);
+	points.addComponent<HUDComponent>(pointTextLabelComponent, HUDComponent::HUDType::POINTS);
 	
 }
 
@@ -151,6 +151,7 @@ void Game::addSystems() {
 	registry->addSystem<ExplosionSystem>();
 	registry->addSystem<DynamicTextSystem>();
 	registry->addSystem<HUDRenderSystem>();
+  registry->addSystem<PointSystem>();
 }
 
 void Game::addTextures() {
@@ -269,6 +270,7 @@ void Game::update(float deltaTime) {
 	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight);
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();
 	registry->getSystem<DynamicTextSystem>().update();
+  registry->getSystem<PointSystem>().update();
 	
 };
 
