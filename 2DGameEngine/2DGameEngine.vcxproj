@@ -555,6 +555,7 @@
     <None Include="libs\glm\gtx\vector_query.inl" />
     <None Include="libs\glm\gtx\wrap.inl" />
     <None Include="lua54.dll" />
+    <None Include="Makefile" />
     <None Include="ogg.dll" />
     <None Include="SDL2.dll" />
     <None Include="SDL2_image.dll" />

@@ -1227,6 +1227,7 @@
     <None Include="vorbis.dll" />
     <None Include="vorbisfile.dll" />
     <None Include="assets\tilemaps\jungle.map" />
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libs\glm\detail\glm.cpp">

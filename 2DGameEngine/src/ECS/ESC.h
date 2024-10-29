@@ -320,10 +320,6 @@ TComponent& Registry::getComponent(const Entity& entity) const {
 	
 	const auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentID]);
   
-  if (!componentPool) {
-    throw std::runtime_error("Component pool not initialized for this component type.");
-  }
-
 	return componentPool->getObject(entityID);
 };
 
