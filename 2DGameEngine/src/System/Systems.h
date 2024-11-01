@@ -94,6 +94,53 @@ private:
 		return (aX < bMaxX && aMaxX > bX && aY < bMaxY && aMaxY > bY);
 
 	}
+	
+	void handleCollision(
+		Entity& a, 
+		Entity& b, 
+		std::unique_ptr<EventBus>& eventBus, 
+		std::unique_ptr<Registry>& registry) {
+
+		// Handle collision between a and b
+
+		// Check if either entity is a projectile
+		bool aIsProjectile = a.hasComponent<ProjectileComponent>();
+		bool bIsProjectile = b.hasComponent<ProjectileComponent>();
+
+		if (aIsProjectile || bIsProjectile) {
+			Entity& projectile = aIsProjectile ? a : b;
+			Entity& other = aIsProjectile ? b : a;
+			auto& projectileComponent = projectile.getComponent<ProjectileComponent>();
+
+			// Friendly projectile hitting player
+			if (other.getLayer() == player && projectileComponent.isFriendly) {
+				return;
+			}
+
+			// Enemy projectile hitting player
+			if (other.getLayer() == player && !projectileComponent.isFriendly) {
+				eventBus->publishEvent<CollisionEvent>(other, projectile);
+				return;
+			}
+
+			// Friendly projectile hitting enemy
+			if (other.getLayer() == enemy && projectileComponent.isFriendly) {
+				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, ENEMY, other);
+				projectile.kill();
+				return;
+			}
+		}
+
+		// Handle player collisions
+		if (a.getLayer() == player || b.getLayer() == player) {
+			Entity& playerEntity = (a.getLayer() == player) ? a : b;
+			Entity& otherEntity = (a.getLayer() == player) ? b : a;
+			eventBus->publishEvent<CollisionEvent>(otherEntity, playerEntity);
+			eventBus->publishEvent<LifeLostEvent>(1, playerEntity);
+			eventBus->publishEvent<ExplosionEvent>(registry, PLAYER, playerEntity);
+			return;
+		}
+	}
 
 public:
 
@@ -101,46 +148,22 @@ public:
 		requireComponent<TransformComponent>();
 		requireComponent<BoxColliderComponent>();
 	}
-
+	
 	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry) {
-
 		std::vector<Entity> entities = getEntities();
 
 		for (auto i = entities.begin(); i != entities.end(); i++) {
-
 			Entity a = *i;
 			TransformComponent& aTransform = a.getComponent<TransformComponent>();
 			BoxColliderComponent& aBoxCollider = a.getComponent<BoxColliderComponent>();
 
 			for (auto j = i + 1; j != entities.end(); j++) {
-
 				Entity b = *j;
-
 				TransformComponent& bTransform = b.getComponent<TransformComponent>();
 				BoxColliderComponent& bBoxCollider = b.getComponent<BoxColliderComponent>();
 
-				if (b.hasComponent<ProjectileComponent>()) {
-					const auto& projectileComponent = b.getComponent<ProjectileComponent>();
-					if (a.getLayer() == player && projectileComponent.isFriendly) {
-						return;
-					}
-					else if (a.getLayer() == player && !projectileComponent.isFriendly) {
-						if (checkCollision(aTransform, aBoxCollider, bTransform, bBoxCollider)) {
-							eventBus->publishEvent<CollisionEvent>(a, b);
-						};
-					}
-					else if (a.getLayer() == enemy && projectileComponent.isFriendly) {
-						if (checkCollision(aTransform, aBoxCollider, bTransform, bBoxCollider)) {
-							eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, ENEMY, a);
-							b.kill();
-						}
-					}
-				}
-				else if (a.getLayer() == player || b.getLayer() == player) {
-					if (checkCollision(aTransform, aBoxCollider, bTransform, bBoxCollider)) {
-						eventBus->publishEvent<CollisionEvent>(a, b);
-						eventBus->publishEvent<ExplosionEvent>(registry, PLAYER, a);
-					};		
+				if (checkCollision(aTransform, aBoxCollider, bTransform, bBoxCollider)) {
+					handleCollision(a, b, eventBus, registry);
 				}
 			}
 		}
@@ -152,9 +175,7 @@ class DamageSystem : public System {
 
 public:
 
-	DamageSystem() {
-		requireComponent<BoxColliderComponent>();
-	}
+	DamageSystem() = default;
 
 	void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
 		eventBus->subscribeToEvent<DamageSystem, CollisionEvent>(this, &DamageSystem::onCollisionEvent);
@@ -478,7 +499,7 @@ public:
 			enemyShip.addComponent<ExplosionComponent>();
 			enemyShip.addComponent<DamageComponent>(0.5f);
 			enemyShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
-      enemyShip.addComponent<KillPointsComponent>(1);
+			enemyShip.addComponent<KillPointsComponent>(1);
 
 		}
 
@@ -513,26 +534,26 @@ public:
 class PointSystem : public System {
 private:
 
-  int points = 0;
+	int points = 0;
 
 public:
 
-  PointSystem() {
-    requireComponent<HUDComponent>();
-  }
+	PointSystem() {
+		requireComponent<HUDComponent>();
+	}
 
-  void update() {
-    for (auto& entity : getEntities()) {
+	void update() {
+		for (auto& entity : getEntities()) {
 
-      auto& hudComponent = entity.getComponent<HUDComponent>();
+			auto& hudComponent = entity.getComponent<HUDComponent>();
 
-      if (hudComponent.type == HUDComponent::HUDType::POINTS) {
-        if (hudComponent.textLabelComponent != nullptr) {
-          hudComponent.textLabelComponent->text = "POINTS: " + std::to_string(points);
-        }
-      }
-    }
-  }
+			if (hudComponent.type == HUDComponent::HUDType::POINTS) {
+				if (hudComponent.textLabelComponent != nullptr) {
+					hudComponent.textLabelComponent->text = "POINTS: " + std::to_string(points);
+				}	
+			}
+		}
+	}
 
   void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
    eventBus->subscribeToEvent<PointSystem, PointEvent>(this, &PointSystem::updatePoints); 
@@ -546,6 +567,62 @@ public:
   }
 
 };
+
+
+class LivesUpdateSystem : public System {
+
+public:
+
+	LivesUpdateSystem() = default;
+
+	void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
+		eventBus->subscribeToEvent<LivesUpdateSystem, LifeLostEvent>(this, &LivesUpdateSystem::updateLife);
+	}
+
+	void updateLife(LifeLostEvent& event) {
+
+		Logger::Log("Event FIred");
+		
+		if (event.entity.hasComponent<LifeComponent>()) {
+
+			Logger::Log("ENTITY IS: " + std::to_string(event.entity.getLayer()));
+
+			auto& lifeComponent = event.entity.getComponent<LifeComponent>();
+
+			lifeComponent.lives -= event.lifeLost;
+		}
+	}
+};
+
+class HUDLifeUpdateSystem : public System {
+
+public:
+
+	HUDLifeUpdateSystem() {
+		requireComponent<HUDComponent>();
+		requireComponent<LifeComponent>();
+	}
+
+	void update() {
+
+		const std::vector<Entity>& entities = getEntities();
+
+		std::for_each(entities.begin(), entities.end(), [&](const Entity& entity) {
+
+			if (entity.getComponent<HUDComponent>().type == HUDComponent::HUDType::HEALTH) {
+				const auto& lifeComponent = entity.getComponent<LifeComponent>();
+				auto& hudComponent = entity.getComponent<HUDComponent>();
+				
+				float spriteSize = 32.0f;
+
+				hudComponent.size.x = spriteSize * lifeComponent.lives;
+
+			}
+
+		});
+	}
+};
+
 
 class DynamicTextSystem : public System {
 public:

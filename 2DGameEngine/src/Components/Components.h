@@ -255,18 +255,18 @@ struct DamageComponent {
 
 struct HUDComponent {
 
-  enum HUDType {
-    POINTS,
-    TITLE,
-    HEALTH,
-    NONE
-  };
+	enum HUDType {
+		POINTS,
+		TITLE,
+		HEALTH,
+		NONE
+	};
 
 	std::shared_ptr<TextLabelComponent> textLabelComponent;
 	std::string assetid = "";
 	glm::vec2 position{0, 0};
 	glm::vec2 size{0, 0};
-  HUDType type = NONE;
+	HUDType type = NONE;
 
 	HUDComponent() = default;
 
@@ -287,4 +287,11 @@ struct KillPointsComponent {
   int points = 0;
 
   KillPointsComponent(int points = 0) : points(points) {};
+};
+
+struct LifeComponent {
+
+	int lives;
+
+	LifeComponent(int lives = 3) : lives(lives) {};
 };

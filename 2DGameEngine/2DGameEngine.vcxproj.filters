@@ -1367,6 +1367,9 @@
     <Image Include="assets\images\heart.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="assets\images\hearts.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\charriot.ttf" />

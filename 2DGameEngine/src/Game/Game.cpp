@@ -112,6 +112,8 @@ void Game::createPlayer() {
 	playerShip.addComponent<KeyboardControllerComponent>();
 	playerShip.addComponent<HealthComponent>();
 	playerShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
+	playerShip.addComponent<LifeComponent>(3);
+	playerShip.addComponent<ExplosionComponent>();
 
 }
 
@@ -126,6 +128,11 @@ void Game::createHUDComponents() {
 	TextLabelComponent pointTextLabelComponent("digiBold", glm::vec2(Game::windowWidth, 0.0f), "POINTS: 00", Color::GREEN);
 	Helper::alignRight(assetStore, renderer, pointTextLabelComponent);
 	points.addComponent<HUDComponent>(pointTextLabelComponent, HUDComponent::HUDType::POINTS);
+
+	Entity lives = registry->createEntity(gui);
+	std::string assetid = "hearts";
+	SDL_Rect spriteRect = Helper::getTextureSize(assetStore, assetid);
+	lives.addComponent<HUDComponent>("hearts", glm::vec2(0.0f, 0.0f), glm::vec2(spriteRect.w, spriteRect.h), HUDComponent::HUDType::HEALTH);
 	
 }
 
@@ -151,7 +158,9 @@ void Game::addSystems() {
 	registry->addSystem<ExplosionSystem>();
 	registry->addSystem<DynamicTextSystem>();
 	registry->addSystem<HUDRenderSystem>();
-  registry->addSystem<PointSystem>();
+	registry->addSystem<PointSystem>();
+	registry->addSystem<LivesUpdateSystem>();
+	registry->addSystem<HUDLifeUpdateSystem>();
 }
 
 void Game::addTextures() {
@@ -164,6 +173,7 @@ void Game::addTextures() {
 	assetStore->addTexture(renderer, "enemyExplosion", "assets/images/enemyexplosion.png");
 	assetStore->addTexture(renderer, "playerExplosion", "assets/images/playerexplosion.png");
 	assetStore->addTexture(renderer, "enemyLaser", "assets/images/enemyLaser.png");
+	assetStore->addTexture(renderer, "hearts", "assets/images/hearts.png");
 }
 
 void Game::addFonts() {
@@ -171,8 +181,7 @@ void Game::addFonts() {
 	assetStore->addFont("digiBold", "assets/fonts/DS-DIGIB.TTF", 32);
 }
 
-void Game::setup()
-{
+void Game::setup() {
 	loadLevel(1);
 	setupEventSubscriptions();
 };
@@ -200,8 +209,11 @@ void Game::setupEventSubscriptions() {
 	auto& dynamicTextSystem = registry->getSystem<DynamicTextSystem>();
 	dynamicTextSystem.subscribeToEvent(eventBus);
 
-  auto& pointSystem = registry->getSystem<PointSystem>();
-  pointSystem.subscribeToEvent(eventBus);
+	auto& pointSystem = registry->getSystem<PointSystem>();
+	pointSystem.subscribeToEvent(eventBus);
+
+	auto& livesUpdateSystem = registry->getSystem<LivesUpdateSystem>();
+	livesUpdateSystem.subscribeToEvent(eventBus);
 }
 
 void Game::run()
@@ -273,7 +285,8 @@ void Game::update(float deltaTime) {
 	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight);
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();
 	registry->getSystem<DynamicTextSystem>().update();
-  registry->getSystem<PointSystem>().update();
+	registry->getSystem<PointSystem>().update();
+	registry->getSystem<HUDLifeUpdateSystem>().update();
 	
 };
 

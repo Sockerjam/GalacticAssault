@@ -113,3 +113,13 @@ public:
 
   PointEvent(Entity& entity) : entity(entity) {};
 };
+
+class LifeLostEvent : public Event {
+
+public:
+
+	int lifeLost;
+	Entity& entity;
+
+	LifeLostEvent(int lifeLost, Entity& entity) : lifeLost(lifeLost), entity(entity) {};
+};

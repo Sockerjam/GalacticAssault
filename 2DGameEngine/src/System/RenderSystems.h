@@ -85,6 +85,13 @@ public:
 			else {
 				
 				SDL_Texture* texture = assetStore->getTexture(hudComponent.assetid);
+
+				SDL_Rect srcRect = {
+					0,
+					0,
+					static_cast<int>(hudComponent.size.x),
+					static_cast<int>(hudComponent.size.y)
+				};
 			
 				SDL_FRect dstRect = {
 					hudComponent.position.x,
@@ -96,16 +103,13 @@ public:
 				SDL_RenderCopyExF(
 					renderer,
 					texture,
-					NULL,
+					&srcRect,
 					&dstRect,
 					0,
 					NULL,
 					SDL_FLIP_NONE);
 			}
-
 		}
-
-
 	}
 
 };
