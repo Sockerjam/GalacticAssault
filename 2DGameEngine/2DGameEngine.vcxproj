@@ -595,6 +595,7 @@
     <Image Include="assets\images\hearts.png" />
     <Image Include="assets\images\landing-base.png" />
     <Image Include="assets\images\playerexplosion.png" />
+    <Image Include="assets\images\playerLifeLost.png" />
     <Image Include="assets\images\playerShip2.png" />
     <Image Include="assets\images\player_laser.png" />
     <Image Include="assets\images\radar.png" />

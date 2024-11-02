@@ -119,7 +119,21 @@ class LifeLostEvent : public Event {
 public:
 
 	int lifeLost;
-	Entity& entity;
+	Entity& playerEntity;
+	Entity& otherEntity;
+	std::unique_ptr<EventBus>& eventBus;
+	std::unique_ptr<Registry>& registry;
 
-	LifeLostEvent(int lifeLost, Entity& entity) : lifeLost(lifeLost), entity(entity) {};
+	LifeLostEvent(
+		int lifeLost, 
+		Entity& playerEntity, 
+		Entity& otherEntity,
+		std::unique_ptr<EventBus>& eventBus,
+		std::unique_ptr<Registry>& registry) : 
+		lifeLost(lifeLost),
+		playerEntity(playerEntity),
+		otherEntity(otherEntity),
+		eventBus(eventBus),
+		registry(registry){};
+
 };

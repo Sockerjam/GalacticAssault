@@ -175,6 +175,7 @@ void Game::addTextures() {
 	assetStore->addTexture(renderer, "playerExplosion", "assets/images/playerexplosion.png");
 	assetStore->addTexture(renderer, "enemyLaser", "assets/images/enemyLaser.png");
 	assetStore->addTexture(renderer, "hearts", "assets/images/hearts.png");
+	assetStore->addTexture(renderer, "playerLifeLost", "assets/images/playerLifeLost.png");
 }
 
 void Game::addFonts() {

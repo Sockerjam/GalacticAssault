@@ -131,13 +131,12 @@ private:
 			}
 		}
 
-		// Handle player collisions
+		// Handle player collisions. Player loses life.
 		if (a.getLayer() == player || b.getLayer() == player) {
 			Entity& playerEntity = (a.getLayer() == player) ? a : b;
 			Entity& otherEntity = (a.getLayer() == player) ? b : a;
-			eventBus->publishEvent<CollisionEvent>(otherEntity, playerEntity);
-			eventBus->publishEvent<LifeLostEvent>(1, playerEntity);
-			eventBus->publishEvent<ExplosionEvent>(registry, PLAYER, playerEntity);
+			Logger::Log("Collision Detected");
+			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, otherEntity, eventBus, registry);
 			return;
 		}
 	}
@@ -581,11 +580,31 @@ public:
 
 	void updateLife(LifeLostEvent& event) {
 
-		if (event.entity.hasComponent<LifeComponent>()) {
+		if (event.playerEntity.hasComponent<LifeComponent>()) {
 
-			auto& lifeComponent = event.entity.getComponent<LifeComponent>();
+			auto& lifeComponent = event.playerEntity.getComponent<LifeComponent>();
 
 			lifeComponent.lives -= event.lifeLost;
+
+			Logger::Log("LIVES: " + std::to_string(lifeComponent.lives));
+
+			if (lifeComponent.lives <= 0) {
+				event.eventBus->publishEvent<CollisionEvent>(event.playerEntity, event.otherEntity);
+				event.eventBus->publishEvent<ExplosionEvent>(event.registry, PLAYER, event.playerEntity);
+			}
+			else {
+
+				const auto& playerPosition = event.playerEntity.getComponent<TransformComponent>();
+
+				Entity lifeLostEntity = event.registry->createEntity(explosion);
+				lifeLostEntity.addComponent<TransformComponent>(, glm::vec2(1, 1), 0);
+				lifeLostEntity.addComponent<SpriteComponent>("playerLifeLost", glm::vec2(32, 32), glm::vec2(0, 0));
+				lifeLostEntity.addComponent<AnimationComponent>(4, 8, false, 100);
+
+				auto& system = event.registry->getSystem<BoxColliderSystem>();
+				system.removeEntity(event.playerEntity);
+			}
+
 		}
 	}
 };

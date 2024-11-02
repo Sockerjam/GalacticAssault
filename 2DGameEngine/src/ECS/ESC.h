@@ -307,7 +307,6 @@ void Registry::removeComponent(const Entity& entity) {
 	Logger::Log("Component id: " + std::to_string(componentID) + " was removed from entity id: " + std::to_string(entityID));
 }
 
-
 template <typename TComponent>
 bool Registry::hasComponent(const Entity& entity) const {
 
