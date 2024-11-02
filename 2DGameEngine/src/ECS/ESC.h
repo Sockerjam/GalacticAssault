@@ -176,6 +176,8 @@ private:
 
 	int numEntities = 0;
 
+	std::unique_ptr<Entity> playerEntity;
+
 	// A vector of components pools, each index is a component type which has a pool of
 	// entities that has that component. For example, tranform component
 	std::vector<std::shared_ptr<IPool>> componentPools;
@@ -199,6 +201,8 @@ public:
 
 	Entity createEntity(Layer layer);
 	void killEntity(Entity entity);
+	void setPlayerEntity(Entity& entity);
+	std::unique_ptr<Entity>& getPlayerEntity();
 
 	void sortSystemEntetiesByLayers();
 
@@ -237,7 +241,7 @@ public:
 
 template <typename TSystem, typename ...TArgs>
 void Registry::addSystem(TArgs&& ...args) {
-	std::shared_ptr<TSystem> system(std::make_shared<TSystem>(TSystem(std::forward<TArgs>(args)...)));
+	std::shared_ptr<TSystem> system = std::make_shared<TSystem>(TSystem(std::forward<TArgs>(args)...));
 	systems.insert(std::make_pair(std::type_index(typeid(TSystem)), system));
 }
 

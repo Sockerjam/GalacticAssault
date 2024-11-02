@@ -581,11 +581,7 @@ public:
 
 	void updateLife(LifeLostEvent& event) {
 
-		Logger::Log("Event FIred");
-		
 		if (event.entity.hasComponent<LifeComponent>()) {
-
-			Logger::Log("ENTITY IS: " + std::to_string(event.entity.getLayer()));
 
 			auto& lifeComponent = event.entity.getComponent<LifeComponent>();
 
@@ -600,25 +596,24 @@ public:
 
 	HUDLifeUpdateSystem() {
 		requireComponent<HUDComponent>();
-		requireComponent<LifeComponent>();
 	}
 
-	void update() {
+	void update(std::unique_ptr<Registry>& registry) {
 
 		const std::vector<Entity>& entities = getEntities();
 
 		std::for_each(entities.begin(), entities.end(), [&](const Entity& entity) {
 
 			if (entity.getComponent<HUDComponent>().type == HUDComponent::HUDType::HEALTH) {
-				const auto& lifeComponent = entity.getComponent<LifeComponent>();
+
+				auto& playerEntity = registry->getPlayerEntity();
+				const auto& playerLifeComponent = playerEntity->getComponent<LifeComponent>();
+
 				auto& hudComponent = entity.getComponent<HUDComponent>();
-				
 				float spriteSize = 32.0f;
 
-				hudComponent.size.x = spriteSize * lifeComponent.lives;
-
+				hudComponent.size.x = spriteSize * playerLifeComponent.lives;
 			}
-
 		});
 	}
 };

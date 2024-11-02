@@ -114,6 +114,7 @@ void Game::createPlayer() {
 	playerShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
 	playerShip.addComponent<LifeComponent>(3);
 	playerShip.addComponent<ExplosionComponent>();
+	registry->setPlayerEntity(playerShip);
 
 }
 
@@ -286,7 +287,7 @@ void Game::update(float deltaTime) {
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();
 	registry->getSystem<DynamicTextSystem>().update();
 	registry->getSystem<PointSystem>().update();
-	registry->getSystem<HUDLifeUpdateSystem>().update();
+	registry->getSystem<HUDLifeUpdateSystem>().update(registry);
 	
 };
 

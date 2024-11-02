@@ -56,6 +56,14 @@ void Registry::killEntity(Entity entity) {
 	entitiesToBeRemoved.insert(entity);
 }
 
+void Registry::setPlayerEntity(Entity& entity) {
+	playerEntity = std::make_unique<Entity>(entity);
+}
+
+std::unique_ptr<Entity>& Registry::getPlayerEntity() {
+	return playerEntity;
+}
+
 Layer Entity::getLayer() const {
 	return layer;
 }
