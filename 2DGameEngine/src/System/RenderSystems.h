@@ -285,6 +285,7 @@ class RenderSystem : public System {
 
 		RenderSystem() {
 			requireComponent<SpriteComponent>();
+			requireComponent<TransformComponent>();
 		}
 
 		void update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore, int offset) {

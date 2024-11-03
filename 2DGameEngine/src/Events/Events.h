@@ -10,10 +10,10 @@ class CollisionEvent : public Event {
 
 public:
 
-	Entity a;
-	Entity b;
+	Entity& a;
+	Entity& b;
 
-	CollisionEvent(Entity a, Entity b) : a(a), b(b) {};
+	CollisionEvent(Entity& a, Entity& b) : a(a), b(b) {};
 };
 
 class KeyboardEvent : public Event {
@@ -136,4 +136,12 @@ public:
 		eventBus(eventBus),
 		registry(registry){};
 
+};
+
+class RestoreBoxColliderEvent : public Event {
+public:
+
+	std::unique_ptr<Registry>& registry;
+
+	RestoreBoxColliderEvent(std::unique_ptr<Registry>& registry) : registry(registry) {};
 };

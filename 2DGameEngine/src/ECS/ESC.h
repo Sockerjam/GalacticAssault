@@ -20,10 +20,11 @@ typedef std::bitset<MAX_COMPONENTS> Signature;
 
 enum Layer {
 	tileMap = 0,
-	explosion,
 	enemy,
 	player,
 	projectile,
+	explosion,
+	playerShield,
 	gui
 };
 

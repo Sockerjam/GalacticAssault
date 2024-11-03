@@ -42,7 +42,7 @@ public:
 		requireComponent<SpriteComponent>();
 	}
 
-	void animate() {
+	void animate(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry) {
 
 		for (auto& entity : getEntities()) {
 
@@ -52,7 +52,6 @@ public:
 			animationComponent.currentFrame = ((SDL_GetTicks() - animationComponent.startTime) 
 					* animationComponent.frameSpeedRate / 1000) 
 					% animationComponent.numFrames;
-
 
 			spriteComponent.srcRect.x = static_cast<int>(spriteComponent.size.x) * animationComponent.currentFrame;
 
@@ -64,6 +63,7 @@ public:
 				}
 				else {
 					entity.kill();
+					entity.getLayer() == playerShield ? eventBus->publishEvent<RestoreBoxColliderEvent>(registry) : void();
 				}
 				
 			}
@@ -135,7 +135,6 @@ private:
 		if (a.getLayer() == player || b.getLayer() == player) {
 			Entity& playerEntity = (a.getLayer() == player) ? a : b;
 			Entity& otherEntity = (a.getLayer() == player) ? b : a;
-			Logger::Log("Collision Detected");
 			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, otherEntity, eventBus, registry);
 			return;
 		}
@@ -289,7 +288,7 @@ public:
 		requireComponent<TransformComponent>();
 	}
 
-	void update(float deltaTime) {
+	void update() {
 
 		for (auto& entity : getEntities()) {
 
@@ -303,7 +302,7 @@ public:
 
 				glm::vec2 directionVector = entityToTrackTransformComponent.position - transformComponent.position;
 
-				rigidBodyComponent.veclocity = glm::normalize(directionVector) * 20.0f;
+				rigidBodyComponent.veclocity = glm::normalize(directionVector) * 40.0f;
 			}
 			else {
 				Logger::Log("entityToTrack is a nullptr");
@@ -586,8 +585,6 @@ public:
 
 			lifeComponent.lives -= event.lifeLost;
 
-			Logger::Log("LIVES: " + std::to_string(lifeComponent.lives));
-
 			if (lifeComponent.lives <= 0) {
 				event.eventBus->publishEvent<CollisionEvent>(event.playerEntity, event.otherEntity);
 				event.eventBus->publishEvent<ExplosionEvent>(event.registry, PLAYER, event.playerEntity);
@@ -596,16 +593,36 @@ public:
 
 				const auto& playerPosition = event.playerEntity.getComponent<TransformComponent>();
 
-				Entity lifeLostEntity = event.registry->createEntity(explosion);
-				lifeLostEntity.addComponent<TransformComponent>(, glm::vec2(1, 1), 0);
+				Entity lifeLostEntity = event.registry->createEntity(playerShield);
+				lifeLostEntity.addComponent<TransformComponent>(playerPosition.position, glm::vec2(1, 1), 0);
 				lifeLostEntity.addComponent<SpriteComponent>("playerLifeLost", glm::vec2(32, 32), glm::vec2(0, 0));
-				lifeLostEntity.addComponent<AnimationComponent>(4, 8, false, 100);
+				lifeLostEntity.addComponent<AnimationComponent>(4, 8, false, 200);
+				lifeLostEntity.addComponent<TrackingComponent>(std::make_shared<Entity>(event.playerEntity));
+				lifeLostEntity.addComponent<RigidBodyComponent>();
 
 				auto& system = event.registry->getSystem<BoxColliderSystem>();
 				system.removeEntity(event.playerEntity);
 			}
 
 		}
+	}
+};
+
+class RestoreBoxColliderSystem : public System {
+
+public:
+
+	RestoreBoxColliderSystem() = default;
+
+	void subscribeToEvent(std::unique_ptr<EventBus>& eventBus) {
+		eventBus->subscribeToEvent<RestoreBoxColliderSystem, RestoreBoxColliderEvent>(this, &RestoreBoxColliderSystem::restoreBoxCollider);
+	}
+
+	void restoreBoxCollider(RestoreBoxColliderEvent& event) {
+		
+		const auto& playerEntity = event.registry->getPlayerEntity();
+		auto& system = event.registry->getSystem<BoxColliderSystem>();
+		system.addEntity(*playerEntity);
 	}
 };
 

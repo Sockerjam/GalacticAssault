@@ -162,6 +162,7 @@ void Game::addSystems() {
 	registry->addSystem<PointSystem>();
 	registry->addSystem<LivesUpdateSystem>();
 	registry->addSystem<HUDLifeUpdateSystem>();
+	registry->addSystem<RestoreBoxColliderSystem>();
 }
 
 void Game::addTextures() {
@@ -216,6 +217,9 @@ void Game::setupEventSubscriptions() {
 
 	auto& livesUpdateSystem = registry->getSystem<LivesUpdateSystem>();
 	livesUpdateSystem.subscribeToEvent(eventBus);
+
+	auto& restoreBoxColliderSystem = registry->getSystem<RestoreBoxColliderSystem>();
+	restoreBoxColliderSystem.subscribeToEvent(eventBus);
 }
 
 void Game::run()
@@ -279,9 +283,9 @@ void Game::processInput() {
 void Game::update(float deltaTime) {
 	registry->update();
 	registry->getSystem<MovementSystem>().update(deltaTime);
-	registry->getSystem<AISystem>().update(deltaTime);
+	registry->getSystem<AISystem>().update();
 	registry->getSystem<StaticEnemySystem>().update(eventBus, registry, 0);
-	registry->getSystem<AnimationSystem>().animate();
+	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
 	registry->getSystem<BoxColliderSystem>().update(eventBus, registry);
 	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight);
