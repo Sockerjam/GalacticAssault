@@ -89,9 +89,9 @@ void Game::loadLevel(int level) {
 	addSystems();
 	addTextures();
 	addFonts();
-	createBackground();
+	//createBackground();
 	createPlayer();
-	createHUDComponents();
+	/*createHUDComponents();*/
 }
 
 void Game::createBackground() {

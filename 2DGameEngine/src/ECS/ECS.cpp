@@ -121,6 +121,12 @@ void Registry::update() {
 
 	for (auto& entity : entitiesToBeRemoved) {
 		removeEntityFromSystems(entity);
+
+		for (const auto& pool : componentPools) {
+			if (pool) {
+				pool->removeEntity(entity.getID());
+			}
+		}
 		
 		entityComponentSignatures[entity.getID()].reset();
 
@@ -128,9 +134,7 @@ void Registry::update() {
 
 		Logger::Log("FREE ID: " + std::to_string(entity.getID()));
 	}
-
 	entitiesToBeRemoved.clear();
-
 }
 
 Registry::Registry() {

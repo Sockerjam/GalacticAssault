@@ -395,9 +395,9 @@ public:
 
 			const auto& transformComponent = entity.getComponent<TransformComponent>();
 			const auto& spriteComponent = entity.getComponent<SpriteComponent>();
-			auto& projectileComponent = entity.getComponent<ProjectileEmitterComponent>();
+			auto& projectileEmitterComponent = entity.getComponent<ProjectileEmitterComponent>();
 
-			if (static_cast<int>(SDL_GetTicks()) - projectileComponent.lastEmissionTime > projectileComponent.repeatFrequency) {
+			if (static_cast<int>(SDL_GetTicks()) - projectileEmitterComponent.lastEmissionTime > projectileEmitterComponent.repeatFrequency) {
 
 				glm::vec2 projectilePosition = Helper::calculcatePosition(transformComponent, spriteComponent);
 				
@@ -416,12 +416,14 @@ public:
 
 				projectile.addComponent<SpriteComponent>("playerLaser");
 
-				glm::vec2 velocity = glm::normalize(directionVector) * projectileComponent.direction * projectileComponent.speed;
+				glm::vec2 velocity = glm::normalize(directionVector) * projectileEmitterComponent.direction * projectileEmitterComponent.speed;
 				projectile.addComponent<RigidBodyComponent>(velocity);
 				projectile.addComponent<BoxColliderComponent>(10, 2);
-				projectile.addComponent<ProjectileComponent>(projectileComponent.projectileDuration, projectileComponent.hitPercentDamage, projectileComponent.isFriendly);
+				projectile.addComponent<ProjectileComponent>(projectileEmitterComponent.projectileDuration, projectileEmitterComponent.hitPercentDamage, projectileEmitterComponent.isFriendly);
 
-				projectileComponent.lastEmissionTime = SDL_GetTicks();
+				auto startTime = projectile.getComponent<ProjectileComponent>().startTime;
+
+				projectileEmitterComponent.lastEmissionTime = SDL_GetTicks();
 			}
 		}
 };
@@ -500,7 +502,6 @@ public:
 			enemyShip.addComponent<KillPointsComponent>(1);
 
 		}
-
 	}
 };
 
