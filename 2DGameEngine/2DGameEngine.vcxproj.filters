@@ -1217,6 +1217,9 @@
     <None Include="libs\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="assets\tilemaps\jungle.map" />
+    <None Include="Makefile" />
+    <None Include="libs\glm\LICENSE" />
     <None Include="lua54.dll" />
     <None Include="ogg.dll" />
     <None Include="SDL2.dll" />
@@ -1226,8 +1229,6 @@
     <None Include="smpeg.dll" />
     <None Include="vorbis.dll" />
     <None Include="vorbisfile.dll" />
-    <None Include="assets\tilemaps\jungle.map" />
-    <None Include="Makefile" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libs\glm\detail\glm.cpp">
