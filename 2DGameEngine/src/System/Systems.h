@@ -592,6 +592,8 @@ public:
 			}
 			else {
 
+				event.otherEntity.kill();
+
 				const auto& playerPosition = event.playerEntity.getComponent<TransformComponent>();
 
 				Entity lifeLostEntity = event.registry->createEntity(playerShield);
