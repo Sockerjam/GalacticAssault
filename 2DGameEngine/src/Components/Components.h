@@ -164,7 +164,6 @@ struct ProjectileEmitterComponent {
 		int projecttileDuration = 10000,
 		float hitPercentDamage = 0.1f,
 		bool isFriendly = false,
-		bool fire = false,
 		const glm::vec2& direction = glm::vec2(1, 1)
 	) {
 
@@ -173,7 +172,6 @@ struct ProjectileEmitterComponent {
 		this->projectileDuration = projecttileDuration;
 		this->hitPercentDamage = hitPercentDamage;
 		this->isFriendly = isFriendly;
-		this->fire = fire;
 		this->lastEmissionTime = SDL_GetTicks();
 		this->direction = direction;
 	}

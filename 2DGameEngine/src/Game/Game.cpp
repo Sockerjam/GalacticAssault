@@ -108,7 +108,7 @@ void Game::createPlayer() {
 	playerShip.addComponent<TransformComponent>(glm::vec2(startingX, centerY), glm::vec2(1.0f, 1.0f), 0.0f);
 	playerShip.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.0f));
 	playerShip.addComponent<BoxColliderComponent>(24, 36);
-	playerShip.addComponent<ProjectileEmitterComponent>(50.0f, 200, 10000, 0.1f, true);
+	playerShip.addComponent<ProjectileEmitterComponent>(80.0f, 200, 10000, 0.1f, true);
 	playerShip.addComponent<KeyboardControllerComponent>();
 	playerShip.addComponent<HealthComponent>();
 	playerShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);

@@ -332,14 +332,12 @@ public:
 					glm::vec2(1, 1),
 					rotation);
 
-				projectile.addComponent<SpriteComponent>("playerLaser");
+				projectile.addComponent<SpriteComponent>(entity.getLayer() == player ? "playerLaser" : "enemyLaser");
 
 				glm::vec2 velocity = glm::normalize(directionVector) * projectileEmitterComponent.direction * projectileEmitterComponent.speed;
 				projectile.addComponent<RigidBodyComponent>(velocity);
 				projectile.addComponent<BoxColliderComponent>(10, 2);
 				projectile.addComponent<ProjectileComponent>(projectileEmitterComponent.projectileDuration, projectileEmitterComponent.hitPercentDamage, projectileEmitterComponent.isFriendly);
-
-				auto startTime = projectile.getComponent<ProjectileComponent>().startTime;
 
 				projectileEmitterComponent.lastEmissionTime = SDL_GetTicks();
 			}
@@ -432,7 +430,7 @@ public:
 
 class LivesUpdateSystem : public System {
 
-public:
+	public:
 
 	LivesUpdateSystem() = default;
 

@@ -62,9 +62,11 @@ private:
 		
 		Entity enemyAI = event.registry->createEntity(enemy);
 		enemyAI.addComponent<TransformComponent>(glm::vec2(randomX, randomY), glm::vec2(1.0f, 1.0f), 0);
-		enemyAI.addComponent<RigidBodyComponent>(glm::vec2(event.speed, 0.0f));
+		enemyAI.addComponent<RigidBodyComponent>();
 		enemyAI.addComponent<SpriteComponent>(assetID, glm::vec2(spriteSize.w, spriteSize.h), glm::vec2(spriteSize.x, spriteSize.y), false);
+		enemyAI.addComponent<EnemyComponent>();
 		enemyAI.addComponent<TrackingComponent>(playerEntity);
+		enemyAI.addComponent<ProjectileEmitterComponent>(50.0f, 600, 5000, 0.1f, false, glm::vec2(-1, 1));
 
 	}
 
@@ -96,9 +98,13 @@ public:
 	}
 
 	void spawnEnemies(EnemySpawnEvent& event) {
-		if (turn % 2 != 0) {
-			spawnTenEnemies(event);
-		}
+		//if (turn % 2 != 0) {
+		//	spawnTenEnemies(event);
+		//}
+		//else {
+		//	spawnAIEnemy(event);
+		//}
+		spawnAIEnemy(event);
 	}
 };
 
