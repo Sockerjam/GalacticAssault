@@ -819,6 +819,9 @@
     <ClInclude Include="libs\date\date.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\System\EnemySpawnSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="libs\glm\detail\func_common.inl">

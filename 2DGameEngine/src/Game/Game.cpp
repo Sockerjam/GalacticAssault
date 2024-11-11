@@ -3,9 +3,8 @@
 #include "../Components/Components.h"
 #include "../System/Systems.h"
 #include "../System/RenderSystems.h"
+#include "../System/EnemySpawnSystem.h"
 #include <glm/glm.hpp>
-#include <fstream>
-#include <sstream>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
 #include "../Helpers/Styling.h"
@@ -169,6 +168,8 @@ void Game::addTextures() {
 
 	assetStore->addTexture(renderer, "player", "assets/images/playerShip2.png");
 	assetStore->addTexture(renderer, "enemyBlack", "assets/images/enemy_black.png");
+	assetStore->addTexture(renderer, "enemyBlue", "assets/images/enemy_blue.png");
+	assetStore->addTexture(renderer, "enemyAI", "assets/images/enemy_ai.png");
 	assetStore->addTexture(renderer, "space", "assets/background/space_2.png");
 	assetStore->addTexture(renderer, "playerLaser", "assets/images/player_laser.png");
 	assetStore->addTexture(renderer, "engineFire", "assets/images/engine_fire.png");
@@ -288,7 +289,7 @@ void Game::update(float deltaTime) {
 	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
 	registry->getSystem<BoxColliderSystem>().update(eventBus, registry);
-	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight);
+	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight - Game::mapOffset);
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();
 	registry->getSystem<DynamicTextSystem>().update();
 	registry->getSystem<PointSystem>().update();
