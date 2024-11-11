@@ -278,88 +278,6 @@ public:
 	}
 };
 
-class AISystem : public System {
-
-public:
-
-	AISystem() {
-		requireComponent<RigidBodyComponent>();
-		requireComponent<TrackingComponent>();
-		requireComponent<TransformComponent>();
-	}
-
-	void update() {
-
-		for (auto& entity : getEntities()) {
-
-			const auto& trackingComponent = entity.getComponent<TrackingComponent>();
-			const auto& transformComponent = entity.getComponent<TransformComponent>();
-			auto& rigidBodyComponent = entity.getComponent<RigidBodyComponent>();
-
-			if (trackingComponent.entity) {
-				const Entity& entityToTrack = *trackingComponent.entity;
-				const auto& entityToTrackTransformComponent = entityToTrack.getComponent<TransformComponent>();
-
-				glm::vec2 directionVector = entityToTrackTransformComponent.position - transformComponent.position;
-
-				rigidBodyComponent.veclocity = glm::normalize(directionVector) * 40.0f;
-			}
-			else {
-				Logger::Log("entityToTrack is a nullptr");
-			}
-		}
-	}
-};
-
-class StaticEnemySystem : public System {
-
-public:
-
-	StaticEnemySystem() {
-		requireComponent<TrackingComponent>();
-		requireComponent<FieldOfViewComponent>();
-		requireComponent<TransformComponent>();
-		requireComponent<SpriteComponent>();
-		requireComponent<ProjectileEmitterComponent>();
-	}
-
-	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, SDL_Keycode symbol) {
-
-		for (auto& entity : getEntities()) {
-
-			const auto& trackingComponent = entity.getComponent<TrackingComponent>();
-			const auto& transformComponent = entity.getComponent<TransformComponent>();
-			const auto& fieldOfViewComponent = entity.getComponent<FieldOfViewComponent>();
-			const auto& spriteComponent = entity.getComponent<SpriteComponent>();
-
-			if (trackingComponent.entity) {
-
-				const Entity& entityToTrack = *trackingComponent.entity;
-				const auto& entityToTrackTransformComponent = entityToTrack.getComponent<TransformComponent>();
-				const glm::vec2 entityToTrackPosition = entityToTrackTransformComponent.position;
-				const auto& entityToTrackSpriteComponent = entityToTrack.getComponent<SpriteComponent>();
-
-				glm::vec2 enemyCenterPosition = transformComponent.position + (spriteComponent.size * 0.5f);
-				glm::vec2 entityToTrackCenterPosition = entityToTrackTransformComponent.position + (entityToTrackSpriteComponent.size * 0.5f);
-
-				glm::vec2 enemyToEntityDirectionVector = (entityToTrackCenterPosition - enemyCenterPosition);
-
-				if (glm::length(enemyToEntityDirectionVector) < glm::length(fieldOfViewComponent.direction)) {
-
-					float dotProduct = glm::dot(glm::normalize(enemyToEntityDirectionVector), glm::normalize(fieldOfViewComponent.direction));
-
-					double fieldOfViewProduct = glm::cos(glm::radians(fieldOfViewComponent.fieldOfView * 0.5));
-
-					if (dotProduct > fieldOfViewProduct) {
-						eventBus->publishEvent<ProjectileEvent>(registry, symbol);
-					}
-				}
-
-			}
-		}
-	}
-};
-
 class ProjectileSystem : public System {
 public:
 
@@ -540,12 +458,12 @@ public:
 
 				const auto& playerPosition = event.playerEntity.getComponent<TransformComponent>();
 
-				Entity lifeLostEntity = event.registry->createEntity(playerShield);
-				lifeLostEntity.addComponent<TransformComponent>(playerPosition.position, glm::vec2(1, 1), 0);
-				lifeLostEntity.addComponent<SpriteComponent>("playerLifeLost", glm::vec2(32, 32), glm::vec2(0, 0));
-				lifeLostEntity.addComponent<AnimationComponent>(4, 8, false, 200);
-				lifeLostEntity.addComponent<TrackingComponent>(std::make_shared<Entity>(event.playerEntity));
-				lifeLostEntity.addComponent<RigidBodyComponent>();
+				Entity shieldEntity = event.registry->createEntity(playerShield);
+				shieldEntity.addComponent<TransformComponent>(playerPosition.position, glm::vec2(1, 1), 0);
+				shieldEntity.addComponent<SpriteComponent>("playerLifeLost", glm::vec2(32, 32), glm::vec2(0, 0));
+				shieldEntity.addComponent<AnimationComponent>(4, 8, false, 200);
+				shieldEntity.addComponent<ShieldComponent>(std::make_shared<Entity>(event.playerEntity));
+				shieldEntity.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 40.0f));
 
 				auto& system = event.registry->getSystem<BoxColliderSystem>();
 				system.removeEntity(event.playerEntity);
@@ -553,6 +471,29 @@ public:
 
 		}
 	}
+};
+
+class ShieldSystem : public System {
+public:
+
+	ShieldSystem() {
+		requireComponent<ShieldComponent>();
+		requireComponent<TransformComponent>();
+	}
+
+	void update() {
+
+		for (auto& entity : getEntities()) {
+
+			const auto& shieldComponent = entity.getComponent<ShieldComponent>();
+			auto& transformComponent = entity.getComponent<TransformComponent>();
+			const auto& playerEntity = shieldComponent.entity;
+			const auto& playerTransformComponent = playerEntity->getComponent<TransformComponent>();
+
+			transformComponent = playerTransformComponent;
+		}
+	}
+
 };
 
 class RestoreBoxColliderSystem : public System {

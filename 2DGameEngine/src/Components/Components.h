@@ -115,13 +115,17 @@ struct KeyboardControllerComponent {
 
 struct TrackingComponent {
 
+	Entity* entity;
+
+	TrackingComponent(Entity* entity = nullptr) : entity(entity) {};
+};
+
+struct ShieldComponent {
+
 	std::shared_ptr<Entity> entity;
 
-	TrackingComponent() = default;
-
-	TrackingComponent(std::shared_ptr<Entity> entity) {
-		this->entity = entity;
-	};
+	ShieldComponent() = default;
+	ShieldComponent(std::shared_ptr<Entity> entity) : entity(entity) {};
 };
 
 struct FieldOfViewComponent {

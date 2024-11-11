@@ -418,6 +418,7 @@
     <ClInclude Include="src\Helpers\Styling.h" />
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\Helpers\Helpers.h" />
+    <ClInclude Include="src\System\AISystem.h" />
     <ClInclude Include="src\System\EnemySpawnSystem.h" />
     <ClInclude Include="src\System\RenderSystems.h" />
   </ItemGroup>

@@ -45,6 +45,26 @@ private:
 			enemyShip.addComponent<KillPointsComponent>(1);
 
 		}
+	}
+
+	const void spawnAIEnemy(EnemySpawnEvent& event) {
+
+		Entity* playerEntity = event.registry->getPlayerEntity().get();
+
+		float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+		float randomNr = std::round(random * 10) / 10;
+		float randomY = randomNr * event.mapHeight;
+		float randomX = (randomNr * event.mapWidth) + event.mapWidth;
+
+		std::string assetID = "enemyAI";
+
+		SDL_Rect spriteSize = Helper::getTextureSize(event.assetStore, assetID);
+		
+		Entity enemyAI = event.registry->createEntity(enemy);
+		enemyAI.addComponent<TransformComponent>(glm::vec2(randomX, randomY), glm::vec2(1.0f, 1.0f), 0);
+		enemyAI.addComponent<RigidBodyComponent>(glm::vec2(event.speed, 0.0f));
+		enemyAI.addComponent<SpriteComponent>(assetID, glm::vec2(spriteSize.w, spriteSize.h), glm::vec2(spriteSize.x, spriteSize.y), false);
+		enemyAI.addComponent<TrackingComponent>(playerEntity);
 
 	}
 

@@ -4,6 +4,7 @@
 #include "../System/Systems.h"
 #include "../System/RenderSystems.h"
 #include "../System/EnemySpawnSystem.h"
+#include "../System/AISystem.h"
 #include <glm/glm.hpp>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
@@ -146,7 +147,6 @@ void Game::addSystems() {
 	registry->addSystem<DamageSystem>();
 	registry->addSystem<KeyboardSystem>();
 	registry->addSystem<AISystem>();
-	registry->addSystem<StaticEnemySystem>();
 	registry->addSystem<ProjectileSystem>();
 	registry->addSystem<ProjectilLifeTimeSystem>();
 	registry->addSystem<ScrollingBackgroundRenderSystem>();
@@ -162,6 +162,7 @@ void Game::addSystems() {
 	registry->addSystem<LivesUpdateSystem>();
 	registry->addSystem<HUDLifeUpdateSystem>();
 	registry->addSystem<RestoreBoxColliderSystem>();
+	registry->addSystem<ShieldSystem>();
 }
 
 void Game::addTextures() {
@@ -285,10 +286,10 @@ void Game::update(float deltaTime) {
 	registry->update();
 	registry->getSystem<MovementSystem>().update(deltaTime);
 	registry->getSystem<AISystem>().update();
-	registry->getSystem<StaticEnemySystem>().update(eventBus, registry, 0);
 	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
 	registry->getSystem<BoxColliderSystem>().update(eventBus, registry);
+	registry->getSystem<ShieldSystem>().update();
 	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight - Game::mapOffset);
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();
 	registry->getSystem<DynamicTextSystem>().update();
