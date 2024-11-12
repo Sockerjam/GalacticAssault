@@ -12,8 +12,9 @@ class EnemySpawnSystem : public System {
 
 private:
 
-	int turn = 1;
+	int turn = 0;
 	float speed = 50.0f;
+	float aiSpeed = 40.0f;
 	float speedMultiplier = 1.0f;
 
 	const void spawnTenEnemies(EnemySpawnEvent& event) {
@@ -21,10 +22,10 @@ private:
 		for (float i = 0; i < 10; i++) {
 			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 			float randomNr = std::round(random * 10) / 10;
-			float offset = i * 100;
+			float xOffset = i * 60;
 
 			float randomY = randomNr * event.mapHeight;
-			float randomX = (randomNr * event.mapWidth) + event.mapWidth + offset;
+			float randomX = (randomNr * event.mapWidth) + event.mapWidth + xOffset;
 
 			int scaledMultiplier = speedMultiplier * 100;
 			int decimal = scaledMultiplier % 10;
@@ -49,30 +50,33 @@ private:
 
 	const void spawnAIEnemy(EnemySpawnEvent& event) {
 
-		Entity* playerEntity = event.registry->getPlayerEntity().get();
+		for (float i = 0; i < turn; i++) {
 
-		float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
-		float randomNr = std::round(random * 10) / 10;
-		float randomY = randomNr * event.mapHeight;
-		float randomX = (randomNr * event.mapWidth) + event.mapWidth;
+			Entity* playerEntity = event.registry->getPlayerEntity().get();
 
-		std::string assetID = "enemyAI";
+			float offset = i * 100;
+			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+			float randomNr = std::round(random * 10) / 10;
+			float randomY = randomNr * event.mapHeight;
+			float randomX = (randomNr * event.mapWidth) + event.mapWidth + offset;
 
-		SDL_Rect spriteSize = Helper::getTextureSize(event.assetStore, assetID);
-		
-		Entity enemyAI = event.registry->createEntity(enemy);
-		enemyAI.addComponent<TransformComponent>(glm::vec2(randomX, randomY), glm::vec2(1.0f, 1.0f), 0);
-		enemyAI.addComponent<RigidBodyComponent>(glm::vec2(0, 0), 40.0f);
-		enemyAI.addComponent<SpriteComponent>(assetID, glm::vec2(spriteSize.w, spriteSize.h), glm::vec2(spriteSize.x, spriteSize.y), false);
-		enemyAI.addComponent<EnemyComponent>();
-		enemyAI.addComponent<TrackingComponent>(playerEntity);
-		enemyAI.addComponent<BoxColliderComponent>(spriteSize.w, spriteSize.h);
-		enemyAI.addComponent<HealthComponent>();
-		enemyAI.addComponent<ExplosionComponent>();
-		enemyAI.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);			
-		enemyAI.addComponent<KillPointsComponent>(2);
-		enemyAI.addComponent<ProjectileEmitterComponent>(70.0f, 2000, 10000, 0.1f, false, glm::vec2(-1, 1));
+			std::string assetID = "enemyAI";
 
+			SDL_Rect spriteSize = Helper::getTextureSize(event.assetStore, assetID);
+
+			Entity enemyAI = event.registry->createEntity(enemy);
+			enemyAI.addComponent<TransformComponent>(glm::vec2(randomX, randomY), glm::vec2(1.0f, 1.0f), 0);
+			enemyAI.addComponent<RigidBodyComponent>(glm::vec2(0, 0), aiSpeed);
+			enemyAI.addComponent<SpriteComponent>(assetID, glm::vec2(spriteSize.w, spriteSize.h), glm::vec2(spriteSize.x, spriteSize.y), false);
+			enemyAI.addComponent<EnemyComponent>();
+			enemyAI.addComponent<TrackingComponent>(playerEntity);
+			enemyAI.addComponent<BoxColliderComponent>(spriteSize.w, spriteSize.h);
+			enemyAI.addComponent<HealthComponent>();
+			enemyAI.addComponent<ExplosionComponent>();
+			enemyAI.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
+			enemyAI.addComponent<KillPointsComponent>(2);
+			enemyAI.addComponent<ProjectileEmitterComponent>(70.0f, 2000, 10000, 0.1f, false, glm::vec2(-1, 1));
+		}
 	}
 
 public:
@@ -92,8 +96,9 @@ public:
 
 		if (entities.empty()) {
 			speed *= speedMultiplier;
+			aiSpeed *= speedMultiplier;
 			eventBus->publishEvent<EnemySpawnEvent>(registry, assetStore, mapWidth, mapHeight, speed);
-			speedMultiplier += static_cast<float>(turn) / 20.0f;
+			speedMultiplier += static_cast<float>(turn) / 30.0f;
 			turn++;
 		}
 	};
@@ -103,7 +108,7 @@ public:
 	}
 
 	void spawnEnemies(EnemySpawnEvent& event) {
-		if (turn % 2 != 0) {
+		if (turn % 2 == 0) {
 			spawnTenEnemies(event);
 		}
 		else {

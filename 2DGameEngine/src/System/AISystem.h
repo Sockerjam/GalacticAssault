@@ -8,7 +8,6 @@ private:
 
 	void launchProjectile(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, ProjectileEmitterComponent& projectileComponent) {
 		if (static_cast<int>(SDL_GetTicks()) - projectileComponent.lastEmissionTime > projectileComponent.repeatFrequency) {
-			Logger::Log("FIRE PROJECTILE");
 			eventBus->publishEvent<ProjectileEvent>(registry, SDLK_UNKNOWN);
 		}
 	}
