@@ -8,9 +8,11 @@
 struct RigidBodyComponent {
 
 	glm::vec2 veclocity;
+	float speed;
 
-	RigidBodyComponent(glm::vec2 veclocity = glm::vec2(0, 0)) {
+	RigidBodyComponent(glm::vec2 veclocity = glm::vec2(0, 0), float speed = 0.0f) {
 		this->veclocity = veclocity;
+		this->speed = speed;
 	}
 
 };
@@ -155,7 +157,6 @@ struct ProjectileEmitterComponent {
 	float hitPercentDamage;
 	bool isFriendly;
 	int lastEmissionTime;
-	bool fire;
 	glm::vec2 direction;
 
 	ProjectileEmitterComponent(
@@ -248,11 +249,11 @@ struct TextLabelComponent {
 	}
 };
 
-struct DamageComponent {
+struct ExtraDamageTakenComponent {
 
 	float hitDamage;
 
-	DamageComponent(float hitDamage = 0) : hitDamage(hitDamage) {};
+	ExtraDamageTakenComponent(float hitDamage = 0) : hitDamage(hitDamage) {};
 };
 
 struct HUDComponent {

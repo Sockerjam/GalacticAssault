@@ -14,7 +14,7 @@ public:
 	Helper() = default;
 	~Helper() = default;
 
-	static glm::vec2 calculcatePosition(const TransformComponent& transformComponent, const SpriteComponent& spriteComponent) {
+	static glm::vec2 calculcatePosition(const TransformComponent& transformComponent, const SpriteComponent& spriteComponent, float xDirection) {
 
 		double radians = glm::radians(std::ceil(transformComponent.rotation));
 		
@@ -22,7 +22,7 @@ public:
 		glm::vec2 centerPosition = transformComponent.position + (spriteComponent.size * 0.5f);
 		
 		// Offset in local space
-		glm::vec2 offset(spriteComponent.size.x * 0.5f, 0.0f);
+		glm::vec2 offset(spriteComponent.size.x * 0.5f * xDirection, 0.0f);
 		
 		// Point in World Space
 		glm::vec4 point(centerPosition.x + offset.x, centerPosition.y, 0.0f, 1.0f);

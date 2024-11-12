@@ -285,7 +285,7 @@ void Game::processInput() {
 void Game::update(float deltaTime) {
 	registry->update();
 	registry->getSystem<MovementSystem>().update(deltaTime);
-	registry->getSystem<AISystem>().update();
+	registry->getSystem<AISystem>().update(eventBus, registry, Game::mapWidth);
 	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
 	registry->getSystem<BoxColliderSystem>().update(eventBus, registry);

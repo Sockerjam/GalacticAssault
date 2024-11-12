@@ -18,7 +18,7 @@ private:
 
 	const void spawnTenEnemies(EnemySpawnEvent& event) {
 
-		for (int i = 0; i < 10; i++) {
+		for (float i = 0; i < 10; i++) {
 			float random = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 			float randomNr = std::round(random * 10) / 10;
 			float offset = i * 100;
@@ -40,7 +40,7 @@ private:
 			enemyShip.addComponent<BoxColliderComponent>(spriteSize.w, spriteSize.h);
 			enemyShip.addComponent<HealthComponent>();
 			enemyShip.addComponent<ExplosionComponent>();
-			enemyShip.addComponent<DamageComponent>(0.5f);
+			enemyShip.addComponent<ExtraDamageTakenComponent>(0.5f);
 			enemyShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
 			enemyShip.addComponent<KillPointsComponent>(1);
 
@@ -62,11 +62,16 @@ private:
 		
 		Entity enemyAI = event.registry->createEntity(enemy);
 		enemyAI.addComponent<TransformComponent>(glm::vec2(randomX, randomY), glm::vec2(1.0f, 1.0f), 0);
-		enemyAI.addComponent<RigidBodyComponent>();
+		enemyAI.addComponent<RigidBodyComponent>(glm::vec2(0, 0), 40.0f);
 		enemyAI.addComponent<SpriteComponent>(assetID, glm::vec2(spriteSize.w, spriteSize.h), glm::vec2(spriteSize.x, spriteSize.y), false);
 		enemyAI.addComponent<EnemyComponent>();
 		enemyAI.addComponent<TrackingComponent>(playerEntity);
-		enemyAI.addComponent<ProjectileEmitterComponent>(50.0f, 600, 5000, 0.1f, false, glm::vec2(-1, 1));
+		enemyAI.addComponent<BoxColliderComponent>(spriteSize.w, spriteSize.h);
+		enemyAI.addComponent<HealthComponent>();
+		enemyAI.addComponent<ExplosionComponent>();
+		enemyAI.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);			
+		enemyAI.addComponent<KillPointsComponent>(2);
+		enemyAI.addComponent<ProjectileEmitterComponent>(70.0f, 2000, 10000, 0.1f, false, glm::vec2(-1, 1));
 
 	}
 
@@ -98,13 +103,12 @@ public:
 	}
 
 	void spawnEnemies(EnemySpawnEvent& event) {
-		//if (turn % 2 != 0) {
-		//	spawnTenEnemies(event);
-		//}
-		//else {
-		//	spawnAIEnemy(event);
-		//}
-		spawnAIEnemy(event);
+		if (turn % 2 != 0) {
+			spawnTenEnemies(event);
+		}
+		else {
+			spawnAIEnemy(event);
+		}
 	}
 };
 

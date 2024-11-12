@@ -119,7 +119,8 @@ private:
 
 			// Enemy projectile hitting player
 			if (other.getLayer() == player && !projectileComponent.isFriendly) {
-				eventBus->publishEvent<CollisionEvent>(other, projectile);
+				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, PLAYER, other);
+				projectile.kill();
 				return;
 			}
 
@@ -135,7 +136,8 @@ private:
 		if (a.getLayer() == player || b.getLayer() == player) {
 			Entity& playerEntity = (a.getLayer() == player) ? a : b;
 			Entity& otherEntity = (a.getLayer() == player) ? b : a;
-			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, otherEntity, eventBus, registry);
+			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, eventBus, registry);
+			otherEntity.kill();
 			return;
 		}
 	}
@@ -317,9 +319,9 @@ public:
 
 			if (static_cast<int>(SDL_GetTicks()) - projectileEmitterComponent.lastEmissionTime > projectileEmitterComponent.repeatFrequency) {
 
-				glm::vec2 projectilePosition = Helper::calculcatePosition(transformComponent, spriteComponent);
+				glm::vec2 projectilePosition = Helper::calculcatePosition(transformComponent, spriteComponent, projectileEmitterComponent.direction.x);
 				
-				double radians = glm::radians(transformComponent.rotation);
+				double radians = glm::radians(transformComponent.rotation) * projectileEmitterComponent.direction.x;
 
 				glm::vec2 directionVector(glm::cos(radians), glm::sin(radians));
 
@@ -446,13 +448,12 @@ class LivesUpdateSystem : public System {
 
 			lifeComponent.lives -= event.lifeLost;
 
+			// If Lives Are Out
 			if (lifeComponent.lives <= 0) {
-				event.eventBus->publishEvent<CollisionEvent>(event.playerEntity, event.otherEntity);
+				event.playerEntity.kill();
 				event.eventBus->publishEvent<ExplosionEvent>(event.registry, PLAYER, event.playerEntity);
 			}
 			else {
-
-				event.otherEntity.kill();
 
 				const auto& playerPosition = event.playerEntity.getComponent<TransformComponent>();
 
@@ -465,6 +466,10 @@ class LivesUpdateSystem : public System {
 
 				auto& system = event.registry->getSystem<BoxColliderSystem>();
 				system.removeEntity(event.playerEntity);
+
+				auto& healthComponent = event.playerEntity.getComponent<HealthComponent>();
+				healthComponent.health = 1.0f;
+				event.eventBus->publishEvent<UpdateTextEvent>(event.playerEntity, healthComponent.health);
 			}
 
 		}
@@ -585,6 +590,10 @@ public:
 
 			textLabelComponent.text = finalHealth;
 
+			if (event.health > 0.5f) {
+				textLabelComponent.textColor = Color::GREEN;
+			}
+
 			if (event.health < 0.5f) {
 				textLabelComponent.textColor = Color::ORANGE;
 			}
@@ -613,19 +622,20 @@ public:
 
 		healthComponent.health -= event.damagePercentage;
 
-		if (event.entity.hasComponent<DamageComponent>()) {
-			auto& damageComponent = event.entity.getComponent<DamageComponent>();
+		if (event.entity.hasComponent<ExtraDamageTakenComponent>()) {
+			auto& damageComponent = event.entity.getComponent<ExtraDamageTakenComponent>();
 			healthComponent.health -= damageComponent.hitDamage;
 		}
 
 		event.eventBus->publishEvent<UpdateTextEvent>(event.entity, healthComponent.health);
 
-		if (healthComponent.health <= 0) {
+		if (healthComponent.health <= 0 && event.entityType == ENEMY) {
 			event.entity.kill();
 			event.eventBus->publishEvent<ExplosionEvent>(event.registry, event.entityType, event.entity);
-      if (event.entityType == ENEMY) {
-        event.eventBus->publishEvent<PointEvent>(event.entity);
-      }
+			event.eventBus->publishEvent<PointEvent>(event.entity);
+		}
+		else if (healthComponent.health <= 0 && event.entityType == PLAYER) {
+			event.eventBus->publishEvent<LifeLostEvent>(1, event.entity, event.eventBus, event.registry);
 		}
 	}
 };
