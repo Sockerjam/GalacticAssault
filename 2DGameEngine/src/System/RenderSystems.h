@@ -80,6 +80,8 @@ public:
 				};
 
 				SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+				SDL_DestroyTexture(texture);
+				texture = nullptr;
 
 			}
 			else {
@@ -108,6 +110,7 @@ public:
 					0,
 					NULL,
 					SDL_FLIP_NONE);
+				
 			}
 		}
 	}
@@ -158,6 +161,8 @@ public:
 			};
 
 			SDL_RenderCopy(renderer, texture, NULL, &dstRect);
+			SDL_DestroyTexture(texture);
+			texture = nullptr;
 
 		}
 	}

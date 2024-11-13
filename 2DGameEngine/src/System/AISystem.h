@@ -43,7 +43,7 @@ public:
 				glm::vec2 directionVector = playerCenterPoint - entityCenterPoint;
 				glm::vec2 normalisedDirectionVector = glm::normalize(directionVector);
 
-				double radians = std::atan2f(normalisedDirectionVector.y, normalisedDirectionVector.x);
+				double radians = glm::atan(normalisedDirectionVector.y, normalisedDirectionVector.x);
 				double degrees = glm::degrees(radians);
 
 				double entityFacingDirection = glm::degrees(std::acos(-1));
