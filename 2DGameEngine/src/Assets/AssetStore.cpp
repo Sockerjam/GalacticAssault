@@ -74,7 +74,7 @@ void AssetStore::addSound(const std::string assetid, const std::string filePath)
 	Logger::Log("Audio created with id: " + assetid);
 }
 
-Mix_Chunk* AssetStore::getSounds(const std::string assetid) {
+Mix_Chunk* AssetStore::getSoundFX(const std::string assetid) {
 	return sounds[assetid];
 }
 

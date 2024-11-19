@@ -29,7 +29,7 @@ public:
 	TTF_Font* getFont(const std::string fontid);
 
 	void addSound(const std::string assetid, const std::string filePath);
-	Mix_Chunk* getSounds(const std::string assetid);
+	Mix_Chunk* getSoundFX(const std::string assetid);
 
 	void addMusic(const std::string assetid, const std::string filePath);
 	Mix_Music* getMusic(const std::string assetid);

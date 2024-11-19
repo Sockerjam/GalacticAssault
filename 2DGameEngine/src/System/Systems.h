@@ -99,7 +99,8 @@ private:
 		Entity& a, 
 		Entity& b, 
 		std::unique_ptr<EventBus>& eventBus, 
-		std::unique_ptr<Registry>& registry) {
+		std::unique_ptr<Registry>& registry,
+		std::unique_ptr<AssetStore>& assetStore) {
 
 		// Handle collision between a and b
 
@@ -119,14 +120,14 @@ private:
 
 			// Enemy projectile hitting player
 			if (other.getLayer() == player && !projectileComponent.isFriendly) {
-				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, PLAYER, other);
+				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, assetStore, PLAYER, other);
 				projectile.kill();
 				return;
 			}
 
 			// Friendly projectile hitting enemy
 			if (other.getLayer() == enemy && projectileComponent.isFriendly) {
-				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, ENEMY, other);
+				eventBus->publishEvent<UpdateHealthEvent>(projectileComponent.hitPercentDamage, eventBus, registry, assetStore, ENEMY, other);
 				projectile.kill();
 				return;
 			}
@@ -149,7 +150,7 @@ public:
 		requireComponent<BoxColliderComponent>();
 	}
 	
-	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry) {
+	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore) {
 		std::vector<Entity> entities = getEntities();
 
 		for (auto i = entities.begin(); i != entities.end(); i++) {
@@ -163,7 +164,7 @@ public:
 				BoxColliderComponent& bBoxCollider = b.getComponent<BoxColliderComponent>();
 
 				if (checkCollision(aTransform, aBoxCollider, bTransform, bBoxCollider)) {
-					handleCollision(a, b, eventBus, registry);
+					handleCollision(a, b, eventBus, registry, assetStore);
 				}
 			}
 		}

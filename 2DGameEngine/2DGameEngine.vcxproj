@@ -422,6 +422,7 @@
     <ClInclude Include="src\System\BackgroundMusicSystem.h" />
     <ClInclude Include="src\System\EnemySpawnSystem.h" />
     <ClInclude Include="src\System\RenderSystems.h" />
+    <ClInclude Include="src\System\SoundEffectSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\tilemaps\jungle.map" />

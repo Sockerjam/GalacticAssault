@@ -6,6 +6,7 @@
 #include "../System/EnemySpawnSystem.h"
 #include "../System/AISystem.h"
 #include "../System/BackgroundMusicSystem.h"
+#include "../System/SoundEffectSystem.h"
 #include <glm/glm.hpp>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
@@ -170,6 +171,7 @@ void Game::addSystems() {
 	registry->addSystem<RestoreBoxColliderSystem>();
 	registry->addSystem<ShieldSystem>();
 	registry->addSystem<BackgroundMusicSystem>();
+	registry->addSystem<SoundEffectSystem>();
 }
 
 void Game::addTextures() {
@@ -246,6 +248,9 @@ void Game::setupEventSubscriptions() {
 
 	auto& restoreBoxColliderSystem = registry->getSystem<RestoreBoxColliderSystem>();
 	restoreBoxColliderSystem.subscribeToEvent(eventBus);
+
+	auto& soundEffectSystem = registry->getSystem<SoundEffectSystem>();
+	soundEffectSystem.subscribeToEvent(eventBus);
 }
 
 void Game::run()
@@ -299,6 +304,7 @@ void Game::processInput() {
 			if (event.key.keysym.sym == SDLK_SPACE)
 			{
 				eventBus->publishEvent<ProjectileEvent>(registry, event.key.keysym.sym);
+				eventBus->publishEvent<SoundEffectEvent>(assetStore, "playerLaser");
 			}
 			break;
 		}

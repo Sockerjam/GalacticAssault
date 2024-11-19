@@ -61,6 +61,7 @@ public:
 	float damagePercentage;
 	std::unique_ptr<EventBus>& eventBus;
 	std::unique_ptr<Registry>& registry; 
+	std::unique_ptr<AssetStore>& assetStore; 
 	EntityType entityType;
 	Entity entity;
 
@@ -69,11 +70,13 @@ public:
 		float damagePercentage, 
 		std::unique_ptr<EventBus>& eventBus,
 		std::unique_ptr<Registry>& registry,
+		std::unique_ptr<AssetStore>& assetStore,
 		EntityType entityType,
 		Entity entity) : 
 		damagePercentage(damagePercentage), 
 		eventBus(eventBus),
 		registry(registry),
+		assetStore(assetStore),
 		entityType(entityType),
 		entity(entity) {};
 };
@@ -141,4 +144,16 @@ public:
 	std::unique_ptr<Registry>& registry;
 
 	RestoreBoxColliderEvent(std::unique_ptr<Registry>& registry) : registry(registry) {};
+};
+
+class SoundEffectEvent : public Event {
+
+public:
+
+	std::unique_ptr<AssetStore>& assetStore;
+	std::string assetid;
+
+	SoundEffectEvent(std::unique_ptr<AssetStore>& assetStore, std::string assetid) : 
+		assetStore(assetStore),
+		assetid(assetid) {};
 };
