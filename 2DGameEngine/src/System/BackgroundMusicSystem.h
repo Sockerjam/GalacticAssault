@@ -12,7 +12,7 @@ public:
 
 		Mix_Music* music = assetStore->getMusic(assetid);
 
-		Mix_VolumeMusic(MIX_MAX_VOLUME * 0.7);
+		Mix_VolumeMusic(MIX_MAX_VOLUME / 6);
 
 		Mix_FadeInMusic(music, -1, 10000);
 	}

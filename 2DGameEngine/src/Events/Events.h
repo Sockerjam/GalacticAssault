@@ -125,16 +125,19 @@ public:
 	Entity& playerEntity;
 	std::unique_ptr<EventBus>& eventBus;
 	std::unique_ptr<Registry>& registry;
+	std::unique_ptr<AssetStore>& assetStore;
 
 	LifeLostEvent(
 		int lifeLost, 
 		Entity& playerEntity, 
 		std::unique_ptr<EventBus>& eventBus,
-		std::unique_ptr<Registry>& registry) : 
+		std::unique_ptr<Registry>& registry,
+		std::unique_ptr<AssetStore>& assetStore) : 
 		lifeLost(lifeLost),
 		playerEntity(playerEntity),
 		eventBus(eventBus),
-		registry(registry){};
+		registry(registry),
+		assetStore(assetStore){};
 
 };
 

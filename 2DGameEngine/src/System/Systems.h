@@ -137,8 +137,9 @@ private:
 		if (a.getLayer() == player || b.getLayer() == player) {
 			Entity& playerEntity = (a.getLayer() == player) ? a : b;
 			Entity& otherEntity = (a.getLayer() == player) ? b : a;
-			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, eventBus, registry);
+			eventBus->publishEvent<LifeLostEvent>(1, playerEntity, eventBus, registry, assetStore);
 			otherEntity.kill();
+			eventBus->publishEvent<SoundEffectEvent>(assetStore, "enemyExplosion");
 			return;
 		}
 	}
@@ -453,6 +454,7 @@ class LivesUpdateSystem : public System {
 			if (lifeComponent.lives <= 0) {
 				event.playerEntity.kill();
 				event.eventBus->publishEvent<ExplosionEvent>(event.registry, PLAYER, event.playerEntity);
+				event.eventBus->publishEvent<SoundEffectEvent>(event.assetStore, "playerExplosion");
 			}
 			else {
 
@@ -633,10 +635,11 @@ public:
 		if (healthComponent.health <= 0 && event.entityType == ENEMY) {
 			event.entity.kill();
 			event.eventBus->publishEvent<ExplosionEvent>(event.registry, event.entityType, event.entity);
+			event.eventBus->publishEvent<SoundEffectEvent>(event.assetStore, "enemyExplosion");
 			event.eventBus->publishEvent<PointEvent>(event.entity);
 		}
 		else if (healthComponent.health <= 0 && event.entityType == PLAYER) {
-			event.eventBus->publishEvent<LifeLostEvent>(1, event.entity, event.eventBus, event.registry);
+			event.eventBus->publishEvent<LifeLostEvent>(1, event.entity, event.eventBus, event.registry, event.assetStore);
 		}
 	}
 };

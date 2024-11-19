@@ -52,7 +52,7 @@ Game::Game()
 		return;
 	}
 
-	if (Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 1024) != 0) {
+	if (Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 512) != 0) {
 		Logger::LogErr(SDL_GetError());
 		return;
 	}
@@ -318,7 +318,7 @@ void Game::update(float deltaTime) {
 	registry->getSystem<AISystem>().update(eventBus, registry, Game::mapWidth);
 	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
-	registry->getSystem<BoxColliderSystem>().update(eventBus, registry);
+	registry->getSystem<BoxColliderSystem>().update(eventBus, registry, assetStore);
 	registry->getSystem<ShieldSystem>().update();
 	registry->getSystem<EnemySpawnSystem>().update(registry, eventBus, assetStore, Game::mapWidth, Game::mapHeight - Game::mapOffset);
 	registry->getSystem<EnemyBoundsCheckingSystem>().update();

@@ -16,7 +16,7 @@ public:
 
 		Mix_Chunk* soundFX = event.assetStore->getSoundFX(event.assetid);
 		
-		Mix_VolumeMusic(MIX_MAX_VOLUME * 0.4);
+		Mix_VolumeMusic(MIX_MAX_VOLUME / 5);
 
 		Mix_PlayChannel(-1, soundFX, 0);
 	}
