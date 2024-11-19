@@ -46,6 +46,10 @@ void AssetStore::clearAssets() {
 		TTF_CloseFont(font.second);
 	}
 	fonts.clear();
+	for (auto sound : sounds) {
+		Mix_FreeChunk(sound.second);
+	}
+	sounds.clear();
 }
 
 void AssetStore::addFont(const std::string fontid, const std::string filePath, int fontSize) {
@@ -54,5 +58,41 @@ void AssetStore::addFont(const std::string fontid, const std::string filePath, i
 
 TTF_Font* AssetStore::getFont(const std::string fontid) {
 	return fonts[fontid];
+}
+
+void AssetStore::addSound(const std::string assetid, const std::string filePath) {
+	
+	Mix_Chunk* audio = Mix_LoadWAV(filePath.c_str());
+
+	if (audio == nullptr) {
+		Logger::LogErr("Failed To Load Audio at " + filePath);
+		return;
+	}
+
+	sounds.emplace(assetid, audio);
+
+	Logger::Log("Audio created with id: " + assetid);
+}
+
+Mix_Chunk* AssetStore::getSounds(const std::string assetid) {
+	return sounds[assetid];
+}
+
+void AssetStore::addMusic(const std::string assetid, const std::string filePath) {
+	
+	Mix_Music* track = Mix_LoadMUS(filePath.c_str());
+
+	if (track == nullptr) {
+		Logger::LogErr("Failed To Load Audio at " + filePath);
+		return;
+	}
+
+	music.emplace(assetid, track);
+
+	Logger::Log("Music created with id: " + assetid);
+}
+
+Mix_Music* AssetStore::getMusic(const std::string assetid) {
+	return music[assetid];
 }
 

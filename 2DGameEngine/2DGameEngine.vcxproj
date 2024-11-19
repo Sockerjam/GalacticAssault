@@ -419,6 +419,7 @@
     <ClInclude Include="src\Logger\Logger.h" />
     <ClInclude Include="src\Helpers\Helpers.h" />
     <ClInclude Include="src\System\AISystem.h" />
+    <ClInclude Include="src\System\BackgroundMusicSystem.h" />
     <ClInclude Include="src\System\EnemySpawnSystem.h" />
     <ClInclude Include="src\System\RenderSystems.h" />
   </ItemGroup>
@@ -624,6 +625,14 @@
     <Font Include="assets\fonts\DS-DIGI.TTF" />
     <Font Include="assets\fonts\DS-DIGIB.TTF" />
     <Font Include="assets\fonts\kenvector_future_thin.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="assets\sounds\EnemyExplosion.mp3" />
+    <Media Include="assets\sounds\EnemyExplosionHigh.mp3" />
+    <Media Include="assets\sounds\EnemyLaser.mp3" />
+    <Media Include="assets\sounds\Music.mp3" />
+    <Media Include="assets\sounds\PlayerExplosion.mp3" />
+    <Media Include="assets\sounds\PlayerLaser.mp3" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

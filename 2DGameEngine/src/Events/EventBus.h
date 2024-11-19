@@ -6,6 +6,7 @@
 #include <list>
 #include <typeindex>
 #include <memory>
+#include <functional>
 
 class IEventCallback {
 private:

@@ -32,9 +32,11 @@ private:
 	void addSystems();
 	void addTextures();
 	void addFonts();
+	void addSounds();
 	void createBackground();
 	void createPlayer();
 	void createHUDComponents();
+	void playBackgroundMusic();
 
 	bool isDebug;
 

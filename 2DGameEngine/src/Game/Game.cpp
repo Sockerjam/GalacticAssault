@@ -5,6 +5,7 @@
 #include "../System/RenderSystems.h"
 #include "../System/EnemySpawnSystem.h"
 #include "../System/AISystem.h"
+#include "../System/BackgroundMusicSystem.h"
 #include <glm/glm.hpp>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
@@ -50,6 +51,13 @@ Game::Game()
 		return;
 	}
 
+	if (Mix_OpenAudio(48000, AUDIO_S16SYS, 2, 1024) != 0) {
+		Logger::LogErr(SDL_GetError());
+		return;
+	}
+
+	Mix_AllocateChannels(8);
+
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
 	SDL_RenderSetLogicalSize(renderer, windowWidth, windowHeight);
@@ -64,10 +72,6 @@ Game::Game()
 		Logger::LogErr("Error creating SDL Renderer");
 	};
 
-	//SDL_SetWindowFullscreen(
-	//	window, 
-	//	SDL_WINDOW_FULLSCREEN);
-	
 	setCenterValues();
 	setup();
 
@@ -89,9 +93,11 @@ void Game::loadLevel(int level) {
 	addSystems();
 	addTextures();
 	addFonts();
+	addSounds();
 	createBackground();
 	createPlayer();
 	createHUDComponents();
+	playBackgroundMusic();
 }
 
 void Game::createBackground() {
@@ -163,6 +169,7 @@ void Game::addSystems() {
 	registry->addSystem<HUDLifeUpdateSystem>();
 	registry->addSystem<RestoreBoxColliderSystem>();
 	registry->addSystem<ShieldSystem>();
+	registry->addSystem<BackgroundMusicSystem>();
 }
 
 void Game::addTextures() {
@@ -184,6 +191,23 @@ void Game::addTextures() {
 void Game::addFonts() {
 	assetStore->addFont("digiBody", "assets/fonts/DS-DIGI.TTF", 12);
 	assetStore->addFont("digiBold", "assets/fonts/DS-DIGIB.TTF", 32);
+}
+
+void Game::addSounds() {
+
+	//Music
+	assetStore->addMusic("backgroundMusic", "assets/sounds/Music.mp3");
+	
+	//Sound FX
+	assetStore->addSound("enemyExplosion", "assets/sounds/EnemyExplosion.mp3");
+	assetStore->addSound("enemyExplosionHigh", "assets/sounds/EnemyExplosionHigh.mp3");
+	assetStore->addSound("enemyLaser", "assets/sounds/EnemyLaser.mp3");
+	assetStore->addSound("playerExplosion", "assets/sounds/PlayerExplosion.mp3");
+	assetStore->addSound("playerLaser", "assets/sounds/PlayerLaser.mp3");
+}
+
+void Game::playBackgroundMusic() {
+	registry->getSystem<BackgroundMusicSystem>().start("backgroundMusic", assetStore);
 }
 
 void Game::setup() {
