@@ -37,6 +37,7 @@ private:
 	void createPlayer();
 	void createHUDComponents();
 	void playBackgroundMusic();
+	void startEngineSound();
 
 	bool isDebug;
 

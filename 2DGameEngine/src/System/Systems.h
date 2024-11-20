@@ -455,6 +455,7 @@ class LivesUpdateSystem : public System {
 				event.playerEntity.kill();
 				event.eventBus->publishEvent<ExplosionEvent>(event.registry, PLAYER, event.playerEntity);
 				event.eventBus->publishEvent<SoundEffectEvent>(event.assetStore, "playerExplosion");
+				event.eventBus->publishEvent<StopEngineEvent>(event.assetStore);
 			}
 			else {
 
@@ -630,6 +631,7 @@ public:
 			healthComponent.health -= damageComponent.hitDamage;
 		}
 
+		event.eventBus->publishEvent<SoundEffectEvent>(event.assetStore, "laserImpact");
 		event.eventBus->publishEvent<UpdateTextEvent>(event.entity, healthComponent.health);
 
 		if (healthComponent.health <= 0 && event.entityType == ENEMY) {

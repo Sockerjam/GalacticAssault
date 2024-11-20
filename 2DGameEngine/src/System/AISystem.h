@@ -6,9 +6,10 @@ class AISystem : public System {
 
 private:
 
-	void launchProjectile(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, ProjectileEmitterComponent& projectileComponent) {
+	void launchProjectile(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, ProjectileEmitterComponent& projectileComponent) {
 		if (static_cast<int>(SDL_GetTicks()) - projectileComponent.lastEmissionTime > projectileComponent.repeatFrequency) {
 			eventBus->publishEvent<ProjectileEvent>(registry, SDLK_UNKNOWN);
+			eventBus->publishEvent<SoundEffectEvent>(assetStore, "enemyLaser");
 		}
 	}
 
@@ -22,7 +23,7 @@ public:
 		requireComponent<ProjectileEmitterComponent>();
 	}
 
-	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, int mapWidth) {
+	void update(std::unique_ptr<EventBus>& eventBus, std::unique_ptr<Registry>& registry, std::unique_ptr<AssetStore>& assetStore, int mapWidth) {
 
 		for (auto& entity : getEntities()) {
 
@@ -54,7 +55,7 @@ public:
 				transformComponent.rotation = finalRotation;
 
 				if (transformComponent.position.x < mapWidth) {
-					launchProjectile(eventBus, registry, projectileEmitterComponent);
+					launchProjectile(eventBus, registry, assetStore, projectileEmitterComponent);
 				}
 
 			}

@@ -160,3 +160,12 @@ public:
 		assetStore(assetStore),
 		assetid(assetid) {};
 };
+
+class StopEngineEvent : public Event {
+
+public:
+
+	std::unique_ptr<AssetStore>& assetStore;
+
+	StopEngineEvent(std::unique_ptr<AssetStore>& assetStore) : assetStore(assetStore) {};
+};

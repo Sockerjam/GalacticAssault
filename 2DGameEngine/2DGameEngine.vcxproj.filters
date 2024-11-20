@@ -831,6 +831,9 @@
     <ClInclude Include="src\System\SoundEffectSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\System\EngineSoundSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="libs\glm\detail\func_common.inl">
@@ -1400,5 +1403,7 @@
     <Media Include="assets\sounds\Music.mp3" />
     <Media Include="assets\sounds\PlayerExplosion.mp3" />
     <Media Include="assets\sounds\PlayerLaser.mp3" />
+    <Media Include="assets\sounds\Engine.mp3" />
+    <Media Include="assets\sounds\LaserImpact.mp3" />
   </ItemGroup>
 </Project>

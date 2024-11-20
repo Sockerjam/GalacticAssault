@@ -7,6 +7,7 @@
 #include "../System/AISystem.h"
 #include "../System/BackgroundMusicSystem.h"
 #include "../System/SoundEffectSystem.h"
+#include "../System/EngineSoundSystem.h"
 #include <glm/glm.hpp>
 #include "../Helpers/Colours.h"
 #include "../Helpers/Helpers.h"
@@ -92,6 +93,7 @@ void Game::setCenterValues() {
 void Game::loadLevel(int level) {
 
 	addSystems();
+	setupEventSubscriptions();
 	addTextures();
 	addFonts();
 	addSounds();
@@ -99,6 +101,7 @@ void Game::loadLevel(int level) {
 	createPlayer();
 	createHUDComponents();
 	playBackgroundMusic();
+	startEngineSound();
 }
 
 void Game::createBackground() {
@@ -115,7 +118,7 @@ void Game::createPlayer() {
 	playerShip.addComponent<TransformComponent>(glm::vec2(startingX, centerY), glm::vec2(1.0f, 1.0f), 0.0f);
 	playerShip.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.0f));
 	playerShip.addComponent<BoxColliderComponent>(24, 36);
-	playerShip.addComponent<ProjectileEmitterComponent>(80.0f, 200, 10000, 0.1f, true);
+	playerShip.addComponent<ProjectileEmitterComponent>(80.0f, 300, 10000, 0.1f, true);
 	playerShip.addComponent<KeyboardControllerComponent>();
 	playerShip.addComponent<HealthComponent>();
 	playerShip.addComponent<TextLabelComponent>("digiBody", glm::vec2(0, 0), "100%", Color::GREEN);
@@ -172,6 +175,7 @@ void Game::addSystems() {
 	registry->addSystem<ShieldSystem>();
 	registry->addSystem<BackgroundMusicSystem>();
 	registry->addSystem<SoundEffectSystem>();
+	registry->addSystem<EngineSoundSystem>();
 }
 
 void Game::addTextures() {
@@ -202,19 +206,23 @@ void Game::addSounds() {
 	
 	//Sound FX
 	assetStore->addSound("enemyExplosion", "assets/sounds/EnemyExplosion.mp3");
-	assetStore->addSound("enemyExplosionHigh", "assets/sounds/EnemyExplosionHigh.mp3");
 	assetStore->addSound("enemyLaser", "assets/sounds/EnemyLaser.mp3");
 	assetStore->addSound("playerExplosion", "assets/sounds/PlayerExplosion.mp3");
 	assetStore->addSound("playerLaser", "assets/sounds/PlayerLaser.mp3");
+	assetStore->addSound("engine", "assets/sounds/Engine.mp3");
+	assetStore->addSound("laserImpact", "assets/sounds/LaserImpact.mp3");
 }
 
 void Game::playBackgroundMusic() {
 	registry->getSystem<BackgroundMusicSystem>().start("backgroundMusic", assetStore);
 }
 
+void Game::startEngineSound() {
+	registry->getSystem<EngineSoundSystem>().start(assetStore);
+}
+
 void Game::setup() {
 	loadLevel(1);
-	setupEventSubscriptions();
 };
 
 void Game::setupEventSubscriptions() {
@@ -251,6 +259,9 @@ void Game::setupEventSubscriptions() {
 
 	auto& soundEffectSystem = registry->getSystem<SoundEffectSystem>();
 	soundEffectSystem.subscribeToEvent(eventBus);
+
+	auto& engineSoundSystem = registry->getSystem<EngineSoundSystem>();
+	engineSoundSystem.subscribeToEvent(eventBus);
 }
 
 void Game::run()
@@ -315,7 +326,7 @@ void Game::processInput() {
 void Game::update(float deltaTime) {
 	registry->update();
 	registry->getSystem<MovementSystem>().update(deltaTime);
-	registry->getSystem<AISystem>().update(eventBus, registry, Game::mapWidth);
+	registry->getSystem<AISystem>().update(eventBus, registry, assetStore, Game::mapWidth);
 	registry->getSystem<AnimationSystem>().animate(eventBus, registry);
 	registry->getSystem<ProjectilLifeTimeSystem>().update();
 	registry->getSystem<BoxColliderSystem>().update(eventBus, registry, assetStore);
